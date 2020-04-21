@@ -1,0 +1,7 @@
+.upgrades {
+    vertical-align: middle;
+    /* height: 80vh;
+    width: 100%; */
+    grid-column: 1;
+    grid-row: 2;
+}

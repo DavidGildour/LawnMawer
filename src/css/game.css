@@ -1,0 +1,17 @@
+.game {
+    /* height: 80vh;
+    width: 100%; */
+    grid-column: 2;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: auto 400px auto;
+    grid-template-rows: auto 400px auto;
+}
+
+#canvas {
+    width: 400px;
+    height: 400px;
+    grid-column: 2;
+    grid-row: 2;
+    border: 1px solid black;
+}

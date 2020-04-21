@@ -1,0 +1,12 @@
+FROM node:12.16.2-alpine
+
+WORKDIR /app
+
+COPY ./public ./public
+COPY ./src ./src
+COPY package.json .
+
+RUN npm i
+
+ENTRYPOINT ["npm"]
+CMD ["start"]
