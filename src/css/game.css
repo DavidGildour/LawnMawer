@@ -13,3 +13,10 @@
     grid-row: 2;
     border: 1px solid black;
 }
+
+.debug {
+    grid-row: 3;
+    grid-column: 2;
+    text-align: left;
+    color: black;
+}
