@@ -8,38 +8,53 @@ export default class Field {
 		this.ctx = ctx;
 		this.baseColor = baseColor;
 		this.cellSize = ctx.canvas.width / size;
-		this.cells = [];
-		for (let i = 0; i < size; i++) {
-			for (let j = 0; j < size; j++) {
-				this.cells.push(new Cell(i, j));
-			}
-		}
+		this.cells = this.initField();
 	}
 
 	getCell(x, y) {
 		return this.cells[x*this.size + y]
 	}
 
+	initField = () => {
+		const cells = [];
+		for (let i = 0; i < this.size; i++) {
+			for (let j = 0; j < this.size; j++) {
+				cells.push(new Cell(i, j));
+			}
+		}
+		return cells;
+	}
+
+	resize(newSize) {
+		this.size = newSize;
+		this.cellSize = this.ctx.canvas.width / newSize;
+		this.cells = this.initField();
+		this.renderAll();
+	}
+
 	update() {
 		for (let cell of this.cells) {
 			if (cell.justMawed) {
-				this.renderCell(cell, this.baseColor);
 				cell.justMawed = false;
+				this.renderCell(cell, this.baseColor);
 			} else if (cell.value < 1 && Math.random() < 0.1) {
 				cell.value = Math.min(cell.value + 0.06, 1);
 				this.renderCell(cell, this.baseColor);
 			}
 		}
-		this.renderMawer();
+		const valueMawed = this.renderMawer();
 		this.progressMawer();
+		return valueMawed;
 	}
 
 	renderMawer() {
 		const [x, y] = this.mawPos;
 		const mawCell = this.getCell(x, y);
 		mawCell.justMawed = true;
+		const valueMawed = mawCell.value;
 		mawCell.value = 0;
 		this.renderCell(mawCell, [0, 100, 40]);
+		return valueMawed;
 	}
 
 	progressMawer() {
