@@ -10,13 +10,25 @@ import Config from './gameLogic/config';
 class Game extends React.Component {
   constructor(props) {
     super(props);
-    const baseConfig = new Config([113, 100], 1);
+    const baseConfig = new Config(
+      [113, 100],
+      1,
+      {
+        size: 1000,
+        tickRate: 5,
+        growthRate: 10,
+      }
+    );
     this.state = {
       cash: 0,
       cfg: baseConfig,
       baseColor: baseConfig.baseColor,
       size: baseConfig.sizes[0],
+      sizePrice: baseConfig.basePrices.size,
       tickRate: baseConfig.tickRates[0],
+      tickRatePrice: baseConfig.basePrices.tickRate,
+      growthRate: baseConfig.growthRates[0],
+      growthRatePrice: baseConfig.basePrices.growthRate,
     }
   }
 
