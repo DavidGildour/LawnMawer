@@ -1,9 +1,10 @@
 import Cell from './cell';
-import { map, hsl } from './utils';
+import { map, hsl, randSample } from './utils';
 
 export default class Field {
 	constructor(ctx, baseColor, size) {
-		this.mawPos = [0, 0];
+        this.mawPos = [0, 0];
+        this.mawedCells = [];
 		this.size = size;
 		this.ctx = ctx;
 		this.baseColor = baseColor;
@@ -15,7 +16,7 @@ export default class Field {
 		return this.cells[x*this.size + y]
 	}
 
-	initField = () => {
+	initField() {
 		const cells = [];
 		for (let i = 0; i < this.size; i++) {
 			for (let j = 0; j < this.size; j++) {
@@ -30,27 +31,38 @@ export default class Field {
 		this.cellSize = this.ctx.canvas.width / newSize;
 		this.cells = this.initField();
 		this.renderAll();
-	}
+    }
+    
+    growTiles(quantity) {
+        let totalGrown = 0;
+        // this is a bottle neck - try to remove it
+        const availableCells = this.cells.filter(cell => cell.value < 1);
+        while (availableCells.length > 0 && totalGrown < quantity) {
+            const cell = randSample(availableCells);
+            cell.value = Math.min(cell.value + 0.1, 1);
+            this.renderCell(cell, this.baseColor);
+            totalGrown++;
+        }
+    }
 
-	update() {
-		for (let cell of this.cells) {
-			if (cell.justMawed) {
-				cell.justMawed = false;
-				this.renderCell(cell, this.baseColor);
-			} else if (cell.value < 1 && Math.random() < 0.1) {
-				cell.value = Math.min(cell.value + 0.06, 1);
-				this.renderCell(cell, this.baseColor);
-			}
-		}
-		const valueMawed = this.renderMawer();
+    renderMawedCells() {
+        for (const mawedCell of this.mawedCells) {
+            this.renderCell(mawedCell, this.baseColor);
+        }
+    }
+
+	update(growthRate) {
+        this.renderMawedCells();
+        this.growTiles(growthRate);
+		const valueMawed = this.mawAndRender();
 		this.progressMawer();
 		return valueMawed;
 	}
 
-	renderMawer() {
+	mawAndRender() {
 		const [x, y] = this.mawPos;
-		const mawCell = this.getCell(x, y);
-		mawCell.justMawed = true;
+        const mawCell = this.getCell(x, y);
+        this.mawedCells = [mawCell];
 		const valueMawed = mawCell.value;
 		mawCell.value = 0;
 		this.renderCell(mawCell, [0, 100, 40]);
@@ -83,7 +95,7 @@ export default class Field {
 		for (let cell of this.cells) {
 			this.renderCell(cell, this.baseColor);
 		}
-		this.renderMawer();
+		this.mawAndRender();
 	}
 
 	renderCell(cell, c) {
