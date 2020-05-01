@@ -46,7 +46,7 @@ class Game extends React.Component {
       this.setState({
         [upgradeType]: newValue,
         cash: cash - price,
-        [upgradeType + "Price"]: Math.ceil(price*1.2),
+        [upgradeType + "Price"]: Math.ceil(price * 1.2),
       });
     }
   }
@@ -79,14 +79,14 @@ class Game extends React.Component {
     const {
       cash,
       baseColor,
-      size,       sizePrice,
-      tickRate,   tickRatePrice,
+      size, sizePrice,
+      tickRate, tickRatePrice,
       growthRate, growthRatePrice,
     } = this.state;
     const ticksPerSecond = (1000 / tickRate).toPrecision(4).replace(/\.?0+$/, "");
-    const currentTickRate   = `${ticksPerSecond} ticks per second`,
-          currentSize       = `${size} x ${size} tiles`,
-          currentGrowthRate = `Growing ${growthRate} tiles per tick`;
+    const currentTickRate = `${ticksPerSecond} ticks per second`,
+      currentSize = `${size} x ${size} tiles`,
+      currentGrowthRate = `Growing ${growthRate} tiles per tick`;
     return (
       <div className="Game">
         <Header />
@@ -98,7 +98,7 @@ class Game extends React.Component {
           godMode={this.godMode}
         />
         <FieldView
-          size={size}  
+          size={size}
           tickRate={tickRate}
           growthRate={growthRate}
           baseColor={baseColor}

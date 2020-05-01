@@ -3,8 +3,8 @@ import { map, hsl, randSample } from './utils';
 
 export default class Field {
 	constructor(ctx, baseColor, size) {
-        this.mawPos = [0, 0];
-        this.mawedCells = [];
+		this.mawPos = [0, 0];
+		this.mawedCells = [];
 		this.size = size;
 		this.ctx = ctx;
 		this.baseColor = baseColor;
@@ -13,7 +13,7 @@ export default class Field {
 	}
 
 	getCell(x, y) {
-		return this.cells[x*this.size + y]
+		return this.cells[x * this.size + y]
 	}
 
 	initField() {
@@ -45,15 +45,17 @@ export default class Field {
         }
     }
 
-    renderMawedCells() {
-        for (const mawedCell of this.mawedCells) {
-            this.renderCell(mawedCell, this.baseColor);
-        }
-    }
+	}
+
+	renderMawedCells() {
+		for (const mawedCell of this.mawedCells) {
+			this.renderCell(mawedCell, this.baseColor);
+		}
+	}
 
 	update(growthRate) {
-        this.renderMawedCells();
-        this.growTiles(growthRate);
+		this.renderMawedCells();
+		this.growTiles(growthRate);
 		const valueMawed = this.mawAndRender();
 		this.progressMawer();
 		return valueMawed;
@@ -61,8 +63,8 @@ export default class Field {
 
 	mawAndRender() {
 		const [x, y] = this.mawPos;
-        const mawCell = this.getCell(x, y);
-        this.mawedCells = [mawCell];
+		const mawCell = this.getCell(x, y);
+		this.mawedCells = [mawCell];
 		const valueMawed = mawCell.value;
 		mawCell.value = 0;
 		this.renderCell(mawCell, [0, 100, 40]);
@@ -72,21 +74,21 @@ export default class Field {
 	progressMawer() {
 		let [x, y] = this.mawPos;
 		if (y % 2) {
-		  if (x > 0) {
-			x--; 
-		  } else {
-			y++;
-		  }
+			if (x > 0) {
+				x--;
+			} else {
+				y++;
+			}
 		} else {
-		  if (x+1 < this.size) {
-			x++;
-		  } else {
-			y++; 
-		  }
+			if (x + 1 < this.size) {
+				x++;
+			} else {
+				y++;
+			}
 		}
-		if (y+1 > this.size) {
-		  y = 0;
-		  x = 0;
+		if (y + 1 > this.size) {
+			y = 0;
+			x = 0;
 		}
 		this.mawPos = [x, y];
 	}
@@ -100,15 +102,15 @@ export default class Field {
 
 	renderCell(cell, c) {
 		if (c.length === 2) {
-			const fullColor = [...c, map(1-cell.value, 0, 1, 20, 40)];
+			const fullColor = [...c, map(1 - cell.value, 0, 1, 20, 40)];
 			this.ctx.fillStyle = hsl(...fullColor);
 		} else {
 			this.ctx.fillStyle = hsl(...c);
 		}
 		this.ctx.fillRect(
-			cell.x*this.cellSize, 
-			cell.y*this.cellSize, 
-			this.cellSize, 
+			cell.x * this.cellSize,
+			cell.y * this.cellSize,
+			this.cellSize,
 			this.cellSize
 		);
 	}
