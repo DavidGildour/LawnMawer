@@ -53,13 +53,11 @@ export function randSample(array) {
             ===
             [1, 0.9, 0.81, 0.7290000000000001, 0.6561000000000001, ..., 0.000029512665430652825]
 */
-export function buildRange(base, stepFunc, condition) {
+export function* buildRange(base, stepFunc, condition) {
     
-    const range = [];
     let currentValue = base;
-    while (condition(currentValue, range)) {
-        range.push(currentValue);
+    while (condition(currentValue)) {
+        yield currentValue;
         currentValue = stepFunc(currentValue);
     }
-    return range;
 }
