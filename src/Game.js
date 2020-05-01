@@ -69,6 +69,12 @@ class Game extends React.Component {
     }
   }
 
+  godMode = () => {
+    this.setState(state => ({
+      cash: state.cash + 100_000
+    }))
+  }
+
   render() {
     const {
       cash,
@@ -89,6 +95,7 @@ class Game extends React.Component {
           upgradeSize={this.upgradeSize} sizePrice={sizePrice} curSize={currentSize}
           upgradeTick={this.upgradeTick} tickRatePrice={tickRatePrice} curTickRate={currentTickRate}
           upgradeGrowth={this.upgradeGrowth} growthRatePrice={growthRatePrice} curGrowthRate={currentGrowthRate}
+          godMode={this.godMode}
         />
         <FieldView
           size={size}  
