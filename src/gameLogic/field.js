@@ -10,6 +10,10 @@ export default class Field {
 		this.baseColor = baseColor;
 		this.cellSize = ctx.canvas.width / size;
 		this.cells = this.initField();
+		this.stats = {
+			grownCellsThisTick: 0,
+			overallCellsLost: 0
+		}
 	}
 
 	getCell(x, y) {
@@ -31,19 +35,22 @@ export default class Field {
 		this.cellSize = this.ctx.canvas.width / newSize;
 		this.cells = this.initField();
 		this.renderAll();
-    }
-    
-    growTiles(quantity) {
-        let totalGrown = 0;
-        // this is a bottle neck - try to remove it
-        const availableCells = this.cells.filter(cell => cell.value < 1);
-        while (availableCells.length > 0 && totalGrown < quantity) {
-            const cell = randSample(availableCells);
-            cell.value = Math.min(cell.value + 0.1, 1);
-            this.renderCell(cell, this.baseColor);
-            totalGrown++;
-        }
-    }
+	}
+
+	growTiles(quantity) {
+		let totalGrown = 0;
+		// this is a bottle neck - try to remove it
+		const availableCells = [...this.cells];
+		for (let i = 0; i < quantity; i++) {
+			const cell = randSample(availableCells);
+			if (cell.value < 1) {
+				cell.value = Math.min(cell.value + 0.1, 1);
+				this.renderCell(cell, this.baseColor);
+				totalGrown++;
+			}
+		}
+		this.stats.grownCellsThisTick = totalGrown;
+		this.stats.overallCellsLost += quantity - totalGrown;
 
 	}
 
