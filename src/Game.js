@@ -23,12 +23,9 @@ class Game extends React.Component {
       cash: 0,
       cfg: baseConfig,
       baseColor: baseConfig.baseColor,
-      size: baseConfig.sizes[0],
-      sizePrice: baseConfig.basePrices.size,
-      tickRate: baseConfig.tickRates[0],
-      tickRatePrice: baseConfig.basePrices.tickRate,
-      growthRate: baseConfig.growthRates[0],
-      growthRatePrice: baseConfig.basePrices.growthRate,
+      size: baseConfig.size,
+      tickRate: baseConfig.tickRate,
+      growthRate: baseConfig.growthRate,
     }
   }
 
@@ -39,14 +36,11 @@ class Game extends React.Component {
 
   genericUpgrade = (upgradeType) => {
     const { cfg, cash } = this.state;
-    const current = this.state[upgradeType];
-    const newValue = cfg.getNext(upgradeType, current);
-    const price = this.state[upgradeType + "Price"];
-    if (newValue && cash - price >= 0) {
+    const price = cfg[upgradeType].currentPrice;
+    if (cash - price >= 0) {
+      cfg[upgradeType].nextValue();
       this.setState({
-        [upgradeType]: newValue,
-        cash: cash - price,
-        [upgradeType + "Price"]: Math.ceil(price * 1.2),
+        cash: cash - price
       });
     }
   }
@@ -58,10 +52,10 @@ class Game extends React.Component {
   tick = (field) => {
     const { tickRate, growthRate } = this.state;
 
-    const rawValueMawed = field.update(growthRate);
+    const rawValueMawed = field.update(growthRate.currentValue);
     const income = this.calculateIncome(rawValueMawed);
 
-    setTimeout(this.tick, tickRate, field);
+    setTimeout(this.tick, tickRate.currentValue, field);
     if (income > 0) {
       this.setState(state => ({
         cash: state.cash + income
@@ -79,28 +73,24 @@ class Game extends React.Component {
     const {
       cash,
       baseColor,
-      size, sizePrice,
-      tickRate, tickRatePrice,
-      growthRate, growthRatePrice,
+      size, 
+      tickRate, 
+      growthRate,
     } = this.state;
-    const ticksPerSecond = (1000 / tickRate).toPrecision(4).replace(/\.?0+$/, "");
-    const currentTickRate = `${ticksPerSecond} ticks per second`,
-      currentSize = `${size} x ${size} tiles`,
-      currentGrowthRate = `Growing ${growthRate} tiles per tick`;
     return (
       <div className="Game">
         <Header />
         <Control
           cash={cash}
-          upgradeSize={this.upgradeSize} sizePrice={sizePrice} curSize={currentSize}
-          upgradeTick={this.upgradeTick} tickRatePrice={tickRatePrice} curTickRate={currentTickRate}
-          upgradeGrowth={this.upgradeGrowth} growthRatePrice={growthRatePrice} curGrowthRate={currentGrowthRate}
+          upgradeSize={this.upgradeSize} sizePrice={size.currentPrice} curSize={size.currentValue}
+          upgradeTick={this.upgradeTick} tickRatePrice={tickRate.currentPrice} curTickRate={tickRate.currentValue}
+          upgradeGrowth={this.upgradeGrowth} growthRatePrice={growthRate.currentPrice} curGrowthRate={growthRate.currentValue}
           godMode={this.godMode}
         />
         <FieldView
-          size={size}
-          tickRate={tickRate}
-          growthRate={growthRate}
+          size={size.currentValue}
+          tickRate={tickRate.currentValue}
+          growthRate={growthRate.currentValue}
           baseColor={baseColor}
           tick={this.tick}
         />
