@@ -23,11 +23,11 @@ export default function FieldView(props) {
         if (field) field.resize(props.size);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.size])
-
+    const fieldStats = field ? field.stats : {}
     return (
         <div className="green rounded game">
             <canvas id="canvas"></canvas>
-            <Debug tickRate={props.tickRate} growthRate={props.growthRate} size={props.size} />
+            <Debug tickRate={props.tickRate} growthRate={props.growthRate} size={props.size} grownCells={fieldStats.grownCellsThisTick} lostCells={fieldStats.overallCellsLost}/>
         </div>
     )
 };
