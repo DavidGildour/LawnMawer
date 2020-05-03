@@ -7,7 +7,7 @@ import FieldView from './comp/fieldView';
 
 import Config from './gameLogic/config';
 
-import { Muney } from './gameLogic/utils';
+import Muney from './utils/money';
 
 class Game extends React.Component {
   constructor(props) {
