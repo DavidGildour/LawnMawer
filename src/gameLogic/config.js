@@ -1,4 +1,4 @@
-import { tickRateGen, fieldSizeGen, growthRateGen } from './baseConfig';
+import { tickRateGen, fieldSizeGen, growthRateGen, mawerSpeedGen } from './baseConfig';
 
 export default class Config {
     constructor(baseColor, cashMultiplier) {
@@ -6,6 +6,7 @@ export default class Config {
         this.fieldSizeGen = fieldSizeGen;
         this.tickRateGen = tickRateGen;
         this.growthRateGen = growthRateGen;
+        this.mawerSpeedGen = mawerSpeedGen;
         this.cashMultpiler = cashMultiplier;
     }
 

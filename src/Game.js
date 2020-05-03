@@ -47,6 +47,7 @@ class Game extends React.Component {
       fieldSize: new Upgrade('fieldSize', 1000, baseConfig.fieldSizeGen, 1.2),
       tickRate: new Upgrade('tickRate', 8, baseConfig.tickRateGen, 1.2),
       growthRate: new Upgrade('growthRate', 10, baseConfig.growthRateGen, 1.6),
+      mawerSpeed: new Upgrade('mawerSpeed', 150, baseConfig.mawerSpeedGen, 1.9),
     }
   }
 
@@ -69,6 +70,7 @@ class Game extends React.Component {
   upgradeTick = () => this.genericUpgrade("tickRate");
   upgradeSize = () => this.genericUpgrade("fieldSize");
   upgradeGrowth = () => this.genericUpgrade("growthRate");
+  upgradeMawerSpeed = () => this.genericUpgrade("mawerSpeed");
 
   tick = (field) => {
     const { tickRate, growthRate } = this.state;
@@ -97,6 +99,7 @@ class Game extends React.Component {
       fieldSize, 
       tickRate, 
       growthRate,
+      mawerSpeed
     } = this.state;
     return (
       <div className="Game">
@@ -106,6 +109,7 @@ class Game extends React.Component {
           upgradeSize={this.upgradeSize} sizePrice={fieldSize.currentPrice} curSize={fieldSize.currentValue}
           upgradeTick={this.upgradeTick} tickRatePrice={tickRate.currentPrice} curTickRate={tickRate.currentValue}
           upgradeGrowth={this.upgradeGrowth} growthRatePrice={growthRate.currentPrice} curGrowthRate={growthRate.currentValue}
+          upgradeMawerSpeed={this.upgradeMawerSpeed} mawerSpeedPrice={mawerSpeed.currentPrice} curMawerSpeed={mawerSpeed.currentValue}
           godMode={this.godMode}
         />
         <FieldView
@@ -113,6 +117,7 @@ class Game extends React.Component {
           tickRate={tickRate.currentValue}
           growthRate={growthRate.currentValue}
           baseColor={baseColor}
+          mawerSpeed={mawerSpeed.currentValue}
           tick={this.tick}
         />
       </div>

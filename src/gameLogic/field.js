@@ -1,9 +1,10 @@
 import Cell from './cell';
 import { map, hsl, randInt } from './utils';
+import Mawer from './mawer';
 
 export default class Field {
 	constructor(ctx, baseColor, size) {
-		this.mawPos = [0, 0];
+		this.mawer = new Mawer();
 		this.mawedCells = [];
 		this.size = size;
 		this.ctx = ctx;
@@ -37,6 +38,10 @@ export default class Field {
 		this.renderAll();
 	}
 
+	speedUpMawer() {
+		this.mawer.increaseSpeed();
+	}
+
 	growTiles(quantity) {
 		let totalGrown = 0;
 		// this is a bottle neck - try to remove it
@@ -55,56 +60,44 @@ export default class Field {
 	}
 
 	renderMawedCells() {
-		for (const mawedCell of this.mawedCells) {
-			this.renderCell(mawedCell, this.baseColor);
+		// Draining mawedCells until empty
+		while (this.mawedCells.length) {
+			this.renderCell(this.mawedCells.pop(), this.baseColor);
 		}
 	}
 
 	update(growthRate) {
 		this.renderMawedCells();
 		this.growTiles(growthRate);
-		const valueMawed = this.mawAndRender();
-		this.progressMawer();
+		let valueMawed = 0;
+		this.renderMawer();
+		for (let i = 0; i < this.mawer.speed; i++) {
+			valueMawed += this.maw();
+			this.mawer.progress(this.size);
+		}
 		return valueMawed;
 	}
 
-	mawAndRender() {
-		const [x, y] = this.mawPos;
+	maw() {
+		const [x, y] = this.mawer.getPos();
 		const mawCell = this.getCell(x, y);
-		this.mawedCells = [mawCell];
+		this.mawedCells.push(mawCell);
 		const valueMawed = mawCell.value;
 		mawCell.value = 0;
-		this.renderCell(mawCell, [0, 100, 40]);
 		return valueMawed;
 	}
 
-	progressMawer() {
-		let [x, y] = this.mawPos;
-		if (y % 2) {
-			if (x > 0) {
-				x--;
-			} else {
-				y++;
-			}
-		} else {
-			if (x + 1 < this.size) {
-				x++;
-			} else {
-				y++;
-			}
-		}
-		if (y + 1 > this.size) {
-			y = 0;
-			x = 0;
-		}
-		this.mawPos = [x, y];
+	renderMawer() {
+		const [mawX, mawY] = this.mawer.getPos();
+		this.renderCell(this.getCell(mawX, mawY), [0, 100, 40]);
 	}
 
 	renderAll() {
 		for (let cell of this.cells) {
 			this.renderCell(cell, this.baseColor);
 		}
-		this.mawAndRender();
+		this.maw();
+		this.renderMawer()
 	}
 
 	renderCell(cell, c) {

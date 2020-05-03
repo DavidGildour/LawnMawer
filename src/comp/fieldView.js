@@ -13,7 +13,7 @@ export default function FieldView(props) {
         const ctx = canvas.getContext("2d");
         const newField = new Field(ctx, props.baseColor, props.size);
         newField.renderAll();
-        newField.progressMawer();
+        newField.mawer.progress(props.size);
         setTimeout(props.tick, props.tickRate, newField);
         setField(newField)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -23,6 +23,10 @@ export default function FieldView(props) {
         if (field) field.resize(props.size);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.size])
+    useEffect(() => {
+        if (field) field.speedUpMawer();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.mawerSpeed])
     const fieldStats = field ? field.stats : {}
     return (
         <div className="green rounded game">
