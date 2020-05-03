@@ -44,7 +44,7 @@ class Game extends React.Component {
     const current = this.state[upgradeType];
     const newValue = cfg.getNext(upgradeType, current);
     const price = this.state[upgradeType + "Price"];
-    if (newValue && cash.sub(price).gt(0)) {
+    if (newValue && cash.sub(price).ge(0)) {
       this.setState({
         [upgradeType]: newValue,
         cash: cash.sub(price),
