@@ -4,10 +4,10 @@ import '../css/control.css';
 export default function Control(props) {
     return (
         <div className="green rounded upgrades">
-            <div>{props.cash} $</div>
-            <button onClick={props.upgradeTick}>Upgrade Tick Rate ({props.tickRatePrice} $)</button> {props.curTickRate}<br />
-            <button onClick={props.upgradeSize}>Upgrade Field Size ({props.sizePrice} $)</button> {props.curSize}<br />
-            <button onClick={props.upgradeGrowth}>Upgrade Growth Rate ({props.growthRatePrice} $)</button> {props.curGrowthRate}<br />
+            <div>{props.cash.toString()}</div>
+            <button onClick={props.upgradeTick}>Upgrade Tick Rate ({props.tickRatePrice.toString()})</button> {props.curTickRate}<br />
+            <button onClick={props.upgradeSize}>Upgrade Field Size ({props.sizePrice.toString()})</button> {props.curSize}<br />
+            <button onClick={props.upgradeGrowth}>Upgrade Growth Rate ({props.growthRatePrice.toString()})</button> {props.curGrowthRate}<br />
             <button onClick={props.godMode}>Add cash</button>
         </div>
     )
