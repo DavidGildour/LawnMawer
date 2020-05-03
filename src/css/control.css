@@ -5,3 +5,16 @@
     grid-column: 1;
     grid-row: 2;
 }
+
+.upgrade {
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
+
+.upgrade .upgradeButton {
+    grid-column: 1;
+}
+
+.upgrade .upgradeText {
+    grid-column: 2;
+}
