@@ -8,7 +8,7 @@ export function map(val, s1, e1, s2, e2) {
 };
 
 export function randInt(min, max) {
-		if (max != undefined) {
+		if (max !== undefined) {
 			return Math.floor(min + Math.random() * (max - min));
 		}
 		return Math.floor(Math.random() * min);
@@ -21,6 +21,7 @@ export function randSample(array) {
     array.splice(i, 1);
     return sample
 }
+
 /**  
     A generic function for creating (potentially) vast Arrays of numerical (or perhaps other)
     values. 

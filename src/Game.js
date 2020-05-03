@@ -7,6 +7,8 @@ import FieldView from './comp/fieldView';
 
 import Config from './gameLogic/config';
 
+import Muney from './utils/money';
+
 class Game extends React.Component {
   constructor(props) {
     super(props);
@@ -14,13 +16,13 @@ class Game extends React.Component {
       [113, 100],
       1,
       {
-        size: 1000,
-        tickRate: 5,
-        growthRate: 10,
+        size: new Muney(1000),
+        tickRate: new Muney(5),
+        growthRate: new Muney(10),
       }
     );
     this.state = {
-      cash: 0,
+      cash: new Muney(0),
       cfg: baseConfig,
       baseColor: baseConfig.baseColor,
       size: baseConfig.sizes[0],
@@ -42,11 +44,11 @@ class Game extends React.Component {
     const current = this.state[upgradeType];
     const newValue = cfg.getNext(upgradeType, current);
     const price = this.state[upgradeType + "Price"];
-    if (newValue && cash - price >= 0) {
+    if (newValue && cash.sub(price).ge(0)) {
       this.setState({
         [upgradeType]: newValue,
-        cash: cash - price,
-        [upgradeType + "Price"]: Math.ceil(price * 1.2),
+        cash: cash.sub(price),
+        [upgradeType + "Price"]: price.mult(1.2),
       });
     }
   }
@@ -64,14 +66,14 @@ class Game extends React.Component {
     setTimeout(this.tick, tickRate, field);
     if (income > 0) {
       this.setState(state => ({
-        cash: state.cash + income
+        cash: state.cash.add(income)
       }));
     }
   }
 
   godMode = () => {
     this.setState(state => ({
-      cash: state.cash + 100_000
+      cash: state.cash.add(100_000)
     }))
   }
 

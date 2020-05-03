@@ -1,5 +1,5 @@
 import Cell from './cell';
-import { map, hsl, randInt } from './utils';
+import { map, hsl, randInt } from '../utils/utils';
 
 export default class Field {
 	constructor(ctx, baseColor, size) {
