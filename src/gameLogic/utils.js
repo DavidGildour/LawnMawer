@@ -57,10 +57,17 @@ export function randSample(array) {
             [1, 0.9, 0.81, 0.7290000000000001, 0.6561000000000001, ..., 0.000029512665430652825]
 */
 export function* buildRange(base, stepFunc, condition) {
-    
+
     let currentValue = base;
     while (condition(currentValue)) {
-        yield currentValue;
-        currentValue = stepFunc(currentValue);
+        let nextValue = stepFunc(currentValue)
+        let final = !condition(nextValue)
+        yield { currentValue, final };
+        currentValue = nextValue;
     }
+}
+
+export function getNextValue(generator) {
+    const val = generator.next().value;
+    return [val.currentValue, val.final] 
 }

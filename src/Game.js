@@ -6,6 +6,7 @@ import Control from './comp/control';
 import FieldView from './comp/fieldView';
 
 import Config from './gameLogic/config';
+import { getNextValue } from './gameLogic/utils'
 
 export class Upgrade {
   constructor(name, basePrice, generator, priceMultiplier) {
@@ -13,16 +14,15 @@ export class Upgrade {
       this.basePrice = basePrice;
       this.generator = generator;
       this.priceMultiplier = priceMultiplier;
-      this.currentValue = this.generator.next().value
-      this.nextValue = this.generator.next().value
-      this.currentPrice = basePrice;
+      this.currentPrice = basePrice / priceMultiplier;
+      this.currentValue = 0;
+      this.getNextValue()
   }
 
   getNextValue = () => {
-      let nextValue = this.generator.next().value;
-      this.currentPrice = nextValue ? Math.ceil(this.currentPrice * this.priceMultiplier) : Infinity;
-      this.currentValue = this.nextValue;
-      this.nextValue = nextValue;
+      let [nextValue, final] = getNextValue(this.generator);
+      this.currentPrice = !final ? Math.ceil(this.currentPrice * this.priceMultiplier) : Infinity;
+      this.currentValue = nextValue;
       return this.currentValue;
   }
 }
