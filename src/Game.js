@@ -7,6 +7,27 @@ import FieldView from './comp/fieldView';
 
 import Config from './gameLogic/config';
 
+export class Upgrade {
+  constructor(name, basePrice, generator, priceMultiplier) {
+      this.name = name;
+      this.basePrice = basePrice;
+      this.generator = generator;
+      this.priceMultiplier = priceMultiplier;
+      this.currentValue = this.generator.next().value
+      this.nextValue = this.generator.next().value
+      this.currentPrice = basePrice;
+  }
+
+  getNextValue = () => {
+      let nextValue = this.generator.next().value;
+      this.currentPrice = nextValue ? Math.ceil(this.currentPrice * this.priceMultiplier) : Infinity;
+      this.currentValue = this.nextValue;
+      this.nextValue = nextValue;
+      return this.currentValue;
+  }
+}
+
+
 class Game extends React.Component {
   constructor(props) {
     super(props);
@@ -23,22 +44,22 @@ class Game extends React.Component {
       cash: 0,
       cfg: baseConfig,
       baseColor: baseConfig.baseColor,
-      size: baseConfig.size,
-      tickRate: baseConfig.tickRate,
-      growthRate: baseConfig.growthRate,
+      fieldSize: new Upgrade('fieldSize', 1000, baseConfig.fieldSizeGen, 1.2),
+      tickRate: new Upgrade('tickRate', 8, baseConfig.tickRateGen, 1.2),
+      growthRate: new Upgrade('growthRate', 10, baseConfig.growthRateGen, 1.6),
     }
   }
 
   calculateIncome = (value) => {
     // TODO: more sophisticated way of calculating income
-    return Math.round(this.state.cfg.multiplier * value);
+    return Math.round(this.state.cfg.cashMultpiler * value);
   }
 
   genericUpgrade = (upgradeType) => {
-    const { cfg, cash } = this.state;
-    const price = cfg[upgradeType].currentPrice;
+    const { cash } = this.state;
+    const price = this.state[upgradeType].currentPrice;
     if (cash - price >= 0) {
-      cfg[upgradeType].getNextValue();
+      this.state[upgradeType].getNextValue();
       this.setState({
         cash: cash - price
       });
@@ -46,7 +67,7 @@ class Game extends React.Component {
   }
 
   upgradeTick = () => this.genericUpgrade("tickRate");
-  upgradeSize = () => this.genericUpgrade("size");
+  upgradeSize = () => this.genericUpgrade("fieldSize");
   upgradeGrowth = () => this.genericUpgrade("growthRate");
 
   tick = (field) => {
@@ -73,7 +94,7 @@ class Game extends React.Component {
     const {
       cash,
       baseColor,
-      size, 
+      fieldSize, 
       tickRate, 
       growthRate,
     } = this.state;
@@ -82,13 +103,13 @@ class Game extends React.Component {
         <Header />
         <Control
           cash={cash}
-          upgradeSize={this.upgradeSize} sizePrice={size.currentPrice} curSize={size.currentValue}
+          upgradeSize={this.upgradeSize} sizePrice={fieldSize.currentPrice} curSize={fieldSize.currentValue}
           upgradeTick={this.upgradeTick} tickRatePrice={tickRate.currentPrice} curTickRate={tickRate.currentValue}
           upgradeGrowth={this.upgradeGrowth} growthRatePrice={growthRate.currentPrice} curGrowthRate={growthRate.currentValue}
           godMode={this.godMode}
         />
         <FieldView
-          size={size.currentValue}
+          size={fieldSize.currentValue}
           tickRate={tickRate.currentValue}
           growthRate={growthRate.currentValue}
           baseColor={baseColor}

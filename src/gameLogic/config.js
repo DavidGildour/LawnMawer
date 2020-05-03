@@ -1,13 +1,12 @@
-import { tickRate, fieldSize, growthRate } from './baseConfig';
+import { tickRateGen, fieldSizeGen, growthRateGen } from './baseConfig';
 
 export default class Config {
-    constructor(baseColor, multiplier, basePrices) {
+    constructor(baseColor, cashMultiplier) {
         this.baseColor = baseColor;
-        this.size = fieldSize;
-        this.tickRate = tickRate;
-        this.growthRate = growthRate;
-        this.multiplier = multiplier;
-        this.basePrices = basePrices;
+        this.fieldSizeGen = fieldSizeGen;
+        this.tickRateGen = tickRateGen;
+        this.growthRateGen = growthRateGen;
+        this.cashMultpiler = cashMultiplier;
     }
 
     getNext(what) {
