@@ -54,8 +54,7 @@ export default class Muney {
 		const suffix = suffixes[exp];
 		const factor = BigInt(Math.pow(THOU, exp));
 		const integerPart = this.value / factor;
-		const padding = 3 - integerPart.toString().length;
-		const decimalPart = ("0".repeat(padding) + this.value.toString()).charAt(3);
+		const decimalPart = this.value.toString().charAt(integerPart.toString().length);
 		if (["", "0"].includes(decimalPart)) {
 			return `${integerPart}${suffix} $`;
 		}
