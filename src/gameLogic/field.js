@@ -1,5 +1,5 @@
 import Cell from './cell';
-import { map, hsl, randSample } from './utils';
+import { map, hsl, randInt } from './utils';
 
 export default class Field {
 	constructor(ctx, baseColor, size) {
@@ -40,9 +40,9 @@ export default class Field {
 	growTiles(quantity) {
 		let totalGrown = 0;
 		// this is a bottle neck - try to remove it
-		const availableCells = [...this.cells];
 		for (let i = 0; i < quantity; i++) {
-			const cell = randSample(availableCells);
+			const [x, y] = [randInt(this.size), randInt(this.size)];
+			const cell = this.getCell(x, y);
 			if (cell.value < 1) {
 				cell.value = Math.min(cell.value + 0.1, 1);
 				this.renderCell(cell, this.baseColor);
