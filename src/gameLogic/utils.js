@@ -8,7 +8,7 @@ export function map(val, s1, e1, s2, e2) {
 };
 
 export function randInt(min, max) {
-		if (max != undefined) {
+		if (max !== undefined) {
 			return Math.floor(min + Math.random() * (max - min));
 		}
 		return Math.floor(Math.random() * min);
@@ -21,6 +21,7 @@ export function randSample(array) {
     array.splice(i, 1);
     return sample
 }
+
 /**  
     A generic function for creating (potentially) vast Arrays of numerical (or perhaps other)
     values. 
@@ -57,13 +58,24 @@ export function randSample(array) {
             [1, 0.9, 0.81, 0.7290000000000001, 0.6561000000000001, ..., 0.000029512665430652825]
 */
 export function* buildRange(base, stepFunc, condition) {
-
-    let currentValue = base;
-    while (condition(currentValue)) {
-        let nextValue = stepFunc(currentValue)
-        let final = !condition(nextValue)
-        yield { currentValue, final };
-        currentValue = nextValue;
+    let currentValue, final;
+    if (base instanceof Array && !stepFunc) {
+        while (base) {
+            currentValue = base.shift();
+            final = base.length === 0;
+            yield { currentValue, final };
+        }
+    } else {
+        if (!condition) {
+            condition = () => true;
+        }
+        currentValue = base;
+        while (condition(currentValue)) {
+            const nextValue = stepFunc(currentValue)
+            final = !condition(nextValue)
+            yield { currentValue, final };
+            currentValue = nextValue;
+        }
     }
 }
 
