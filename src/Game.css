@@ -8,6 +8,11 @@
   grid-template-rows: 10% 90%;
 }
 
+.grass {
+  background: url(static/grass.jpg);
+  color: white;
+}
+
 .green {
   background-color: lightgreen;
   color: green;

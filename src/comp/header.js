@@ -5,8 +5,10 @@ import '../css/header.css';
 function Header() {
     return (
         <header className="green rounded">
-            <p>- LawnMawer -</p>
+            <h1 class="title animated slideInLeft delay-1s">- LawnMawer -</h1>
+            
         </header>
+        
     )
 }
 
