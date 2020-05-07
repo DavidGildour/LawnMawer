@@ -65,7 +65,7 @@ export function randSample(array) {
  * the array, otherwise, returns a generator of a specified sequence, given a first term, a formula, and
  * optionally a condition describing a limit of the sequence.
  *
- * @param {Array|*}        base        Either the first element yielded by the generator that serves as a base for calculating
+ * @param {Array|*}        base  Either the first element yielded by the generator that serves as a base for calculating
  *                               the next terms, or any array from which the generator should be created.
  * @param {Function} [stepFunc]  A function used to calculate the next value yielded by the generator. Takes a single argument,
  *                               which is the last value yielded by the generator.
