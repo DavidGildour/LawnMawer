@@ -1,8 +1,9 @@
 header {
+  display: flex;
+  justify-content: center;
   grid-column: 1 / 3;
 }
 
 .title {
-  margin-top: 20px;
   font-weight: 400;
 }
