@@ -40,7 +40,11 @@ class Game extends React.Component {
     const { cash } = this.state;
     const price = this.state[upgradeType].currentPrice;
     if (cash - price >= 0) {
+<<<<<<< HEAD
       this.state[upgradeType].upgrade();
+=======
+      this.state[upgradeType].incrementPrice();
+>>>>>>> 202510a35a7571d3fafde194087ebedff81a67d1
       this.setState({
         cash: cash - price
       });
