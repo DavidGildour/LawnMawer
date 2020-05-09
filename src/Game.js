@@ -13,7 +13,9 @@ class Game extends React.Component {
   constructor(props) {
     super(props);
     const grassField = new Config({
-      baseColor: [113, 100],
+      baseColor: [279, 100, 20],
+      grownColor: [279, 100, 40],
+      mawerColor: [176, 65, 53],
       cashMultiplier: 1,
       fieldSizeBasePrice: 1000,
       growthRateBasePrice: 15,
@@ -24,6 +26,8 @@ class Game extends React.Component {
       cash: 0,
       cashMultiplier: grassField.cashMultpiler,
       baseColor: grassField.baseColor,
+      grownColor: grassField.grownColor,
+      mawerColor: grassField.mawerColor,
       fieldSize: Upgrade.fromStatBase('fieldSize', grassField.fieldSize),
       tickRate: Upgrade.fromStatBase('tickRate', grassField.tickRate),
       growthRate: Upgrade.fromStatBase('growthRate', grassField.growthRate),
@@ -76,6 +80,8 @@ class Game extends React.Component {
     const {
       cash,
       baseColor,
+      grownColor,
+      mawerColor,
       fieldSize, 
       tickRate, 
       growthRate,
@@ -97,6 +103,8 @@ class Game extends React.Component {
           tickRate={tickRate.currentValue}
           growthRate={growthRate.currentValue}
           baseColor={baseColor}
+          grownColor={grownColor}
+          mawerColor={mawerColor}
           mawerSpeed={mawerSpeed.currentValue}
           tick={this.tick}
         />

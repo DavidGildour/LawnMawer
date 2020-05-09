@@ -1,7 +1,8 @@
-export default class Mawer {
-    constructor() {
-        this.x = 0;
-        this.y = 0;
+import FieldEntity from "./fieldEntity";
+
+export default class Mawer extends FieldEntity {
+    constructor(color) {
+				super(0, 0, color);
         this.mawedCells= [];
         this.speed = 1;
         this.size = 1;

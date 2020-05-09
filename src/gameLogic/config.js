@@ -9,8 +9,11 @@ class StatBase {
 }
 
 export default class Config {
-    constructor({ baseColor, tickRateBasePrice, growthRateBasePrice, fieldSizeBasePrice, mawerSpeedBasePrice, cashMultiplier }) {
+    constructor({ baseColor, grownColor, mawerColor, tickRateBasePrice, growthRateBasePrice,
+                  fieldSizeBasePrice, mawerSpeedBasePrice, cashMultiplier }) {
         this.baseColor = baseColor;
+        this.grownColor = grownColor;
+        this.mawerColor = mawerColor;
         this.fieldSize = new StatBase(fieldSizeBasePrice, fieldSizeGen, 2.5);
         this.tickRate = new StatBase(tickRateBasePrice, tickRateGen, 1.2);
         this.growthRate = new StatBase(growthRateBasePrice, growthRateGen, 1.2);

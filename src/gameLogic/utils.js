@@ -28,6 +28,24 @@ export function map(val, s1, e1, s2, e2) {
 };
 
 /**
+ * @typedef {[Number, Number, Number]} HSLColor
+/**
+ * Given a float value in range [0, 1] and two HSLColors, returns an HSLColor that is a color between these two.
+ * 
+ * @param {Number} val 
+ * @param {HSLColor} c1 
+ * @param {HSLColor} c2 
+ * @return {HSLColor}
+ */
+export function mapHSL(val, c1, c2) {
+    return [
+        map(val, 0, 1, c1[0], c2[0]),
+        map(val, 0, 1, c1[1], c2[1]),
+        map(val, 0, 1, c1[2], c2[2]),
+    ]
+};
+
+/**
  * Returns a random integer from a given range [a, b).
  *
  * @param {Number} min   Either a lower limit (inclusive) of a desired range, or a upper range (exclusive) of a range (0, min)

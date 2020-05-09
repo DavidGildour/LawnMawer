@@ -1,31 +1,34 @@
-import Cell from './cell';
-import { map, hsl, randInt } from './utils';
+import Grass from './grass';
+import { hsl, randInt } from './utils';
 import Mawer from './mawer';
 
+const GROWTH_PER_TICK = 0.03;
+
 export default class Field {
-	constructor(ctx, baseColor, size) {
-		this.mawer = new Mawer();
+	constructor(ctx, baseColor, grownColor, mawerColor, size) {
+		this.mawer = new Mawer(mawerColor);
 		this.mawedCells = [];
 		this.size = size;
 		this.ctx = ctx;
 		this.baseColor = baseColor;
+		this.grownColor = grownColor;
 		this.cellSize = ctx.canvas.width / size;
 		this.cells = this.initField();
-		this.stats = {
+		this.debugStats = {
 			grownCellsThisTick: 0,
 			overallCellsLost: 0
 		}
 	}
 
 	getCell(x, y) {
-		return this.cells[x * this.size + y]
+		return this.cells[x * this.size + y];
 	}
 
 	initField() {
 		const cells = [];
 		for (let i = 0; i < this.size; i++) {
 			for (let j = 0; j < this.size; j++) {
-				cells.push(new Cell(i, j));
+				cells.push(new Grass(i, j, this.baseColor, this.grownColor));
 			}
 		}
 		return cells;
@@ -44,25 +47,24 @@ export default class Field {
 
 	growTiles(quantity) {
 		let totalGrown = 0;
-		// this is a bottle neck - try to remove it
 		for (let i = 0; i < quantity; i++) {
 			const [x, y] = [randInt(this.size), randInt(this.size)];
 			const cell = this.getCell(x, y);
 			if (cell.value < 1) {
-				cell.value = Math.min(cell.value + 0.1, 1);
-				this.renderCell(cell, this.baseColor);
+				cell.value = Math.min(cell.value + GROWTH_PER_TICK, 1);
+				this.renderCell(cell);
 				totalGrown++;
 			}
 		}
-		this.stats.grownCellsThisTick = totalGrown;
-		this.stats.overallCellsLost += quantity - totalGrown;
+		this.debugStats.grownCellsThisTick = totalGrown;
+		this.debugStats.overallCellsLost += quantity - totalGrown;
 
 	}
 
 	renderMawedCells() {
 		// Draining mawedCells until empty
 		while (this.mawedCells.length) {
-			this.renderCell(this.mawedCells.pop(), this.baseColor);
+			this.renderCell(this.mawedCells.pop());
 		}
 	}
 
@@ -88,25 +90,19 @@ export default class Field {
 	}
 
 	renderMawer() {
-		const [mawX, mawY] = this.mawer.getPos();
-		this.renderCell(this.getCell(mawX, mawY), [0, 100, 40]);
+		this.renderCell(this.mawer);
 	}
 
 	renderAll() {
 		for (let cell of this.cells) {
-			this.renderCell(cell, this.baseColor);
+			this.renderCell(cell);
 		}
 		this.maw();
 		this.renderMawer()
 	}
 
-	renderCell(cell, c) {
-		if (c.length === 2) {
-			const fullColor = [...c, map(1 - cell.value, 0, 1, 20, 40)];
-			this.ctx.fillStyle = hsl(...fullColor);
-		} else {
-			this.ctx.fillStyle = hsl(...c);
-		}
+	renderCell(cell) {
+		this.ctx.fillStyle = hsl(...cell.color);
 		this.ctx.fillRect(
 			cell.x * this.cellSize,
 			cell.y * this.cellSize,
