@@ -13,9 +13,9 @@ class Game extends React.Component {
   constructor(props) {
     super(props);
     const grassField = new Config({
-      baseColor: [279, 100, 20],
-      grownColor: [279, 100, 40],
-      mawerColor: [176, 65, 53],
+      baseColor: [113, 100, 40],
+      grownColor: [113, 100, 20],
+      mawerColor: [0, 100, 40],
       cashMultiplier: 1,
       fieldSizeBasePrice: 1000,
       growthRateBasePrice: 15,

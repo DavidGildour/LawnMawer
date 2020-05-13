@@ -9,6 +9,6 @@ export default class Grass extends FieldEntity {
 	}
 
 	get color() {
-		return mapHSL(this.value, this.grownColor, this.baseColor);
+		return mapHSL(this.value, this.baseColor, this.grownColor);
 	}
 };

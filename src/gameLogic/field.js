@@ -2,7 +2,7 @@ import Grass from './grass';
 import { hsl, randInt } from './utils';
 import Mawer from './mawer';
 
-const GROWTH_PER_TICK = 0.03;
+const GROWTH_PER_TICK = 0.04;
 
 export default class Field {
 	constructor(ctx, baseColor, grownColor, mawerColor, size) {
