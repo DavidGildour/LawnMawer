@@ -87,12 +87,12 @@ export default class Field {
 	update(growthRate) {
 		this.renderMawedCells();
 		this.growTiles(growthRate);
-		let valueMawed = 0;
 		this.renderMawer();
-		for (let i = 0; i < this.mawer.speed; i++) {
-			valueMawed += this.maw();
-			this.mawer.progress(this.size);
-		}
+		let mawedCells = this.mawer.maw(this.size);
+		this.mawedCells = mawedCells.map(pos => this.getCell(...pos))
+		this.mawer.harvest(this.mawedCells)
+		let valueMawed = this.mawer.getGrass();
+		this.debugStats.grassMawed += valueMawed;
 		return valueMawed;
 	}
 
@@ -113,6 +113,11 @@ export default class Field {
 		for (let cell of this.cells) {
 			this.renderCell(cell);
 		}
+		this.renderMawer();
+	}
+
+	initiate() {
+		this.renderAll();
 		this.maw();
 		this.renderMawer()
 	}

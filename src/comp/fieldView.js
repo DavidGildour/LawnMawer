@@ -12,7 +12,7 @@ export default function FieldView(props) {
         canvas.height = 400;
         const ctx = canvas.getContext("2d");
         const newField = new Field(ctx, props.baseColor, props.grownColor, props.mawerColor, props.size);
-        newField.renderAll();
+        newField.initiate();
         newField.mawer.progress(props.size);
         setTimeout(props.tick, props.tickRate, newField);
         setField(newField)
