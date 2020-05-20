@@ -32,6 +32,9 @@ class Game extends React.Component {
       tickRate: Upgrade.fromStatBase('tickRate', grassField.tickRate),
       growthRate: Upgrade.fromStatBase('growthRate', grassField.growthRate),
       mawerSpeed: Upgrade.fromStatBase('mawerSpeed', grassField.mawerSpeed),
+      paused: false,
+      debug: true,
+      valuesShown: false
     }
   }
 
@@ -56,13 +59,25 @@ class Game extends React.Component {
   upgradeGrowth = () => this.genericUpgrade("growthRate");
   upgradeMawerSpeed = () => this.genericUpgrade("mawerSpeed");
 
+  pauseGame = () => {
+    clearTimeout(this.tickTimeoutId);
+    this.setState({paused: true})
+  }
+  resumeGame = () => {
+    this.tick();
+    this.setState({paused: false})
+  }
+  toggleValues = () => {
+    this.setState({ valuesShown: !this.state.valuesShown})
+  }
+
   tick = (field) => {
     const { tickRate, growthRate } = this.state;
 
     const rawValueMawed = field.update(growthRate.currentValue);
     const income = this.calculateIncome(rawValueMawed);
 
-    setTimeout(this.tick, tickRate.currentValue, field);
+    this.tickTimeoutId = setTimeout(this.tick, tickRate.currentValue, field);
     if (income > 0) {
       this.setState(state => ({
         cash: state.cash + income
@@ -85,7 +100,8 @@ class Game extends React.Component {
       fieldSize, 
       tickRate, 
       growthRate,
-      mawerSpeed
+      mawerSpeed,
+      debug
     } = this.state;
     return (
       <div className="Game">
@@ -97,6 +113,11 @@ class Game extends React.Component {
           upgradeGrowth={this.upgradeGrowth} growthRatePrice={growthRate.currentPrice} curGrowthRate={growthRate.currentValue}
           upgradeMawerSpeed={this.upgradeMawerSpeed} mawerSpeedPrice={mawerSpeed.currentPrice} curMawerSpeed={mawerSpeed.currentValue}
           godMode={this.godMode}
+          pause={this.pauseGame}
+          resume={this.resumeGame}
+          toggleValues={this.toggleValues}
+          paused={this.state.paused}
+          debug={debug}
         />
         <FieldView
           size={fieldSize.currentValue}
@@ -106,6 +127,7 @@ class Game extends React.Component {
           grownColor={grownColor}
           mawerColor={mawerColor}
           mawerSpeed={mawerSpeed.currentValue}
+          showValues={this.state.valuesShown}
           tick={this.tick}
         />
       </div>

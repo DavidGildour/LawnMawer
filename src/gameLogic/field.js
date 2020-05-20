@@ -16,8 +16,15 @@ export default class Field {
 		this.cells = this.initField();
 		this.debugStats = {
 			grownCellsThisTick: 0,
-			overallCellsLost: 0
+			overallCellsLost: 0,
+			grassInMawer: this.getStoredGrass(),
+			grassMawed: 0,
+			showValues: false
 		}
+	}
+
+	getDebugStats = () => {
+		return {...this.debugStats, grassInMawer: this.getStoredGrass()};
 	}
 
 	getCell(x, y) {
@@ -38,11 +45,15 @@ export default class Field {
 		this.size = newSize;
 		this.cellSize = this.ctx.canvas.width / newSize;
 		this.cells = this.initField();
-		this.renderAll();
+		this.initiate();
 	}
 
 	speedUpMawer() {
 		this.mawer.increaseSpeed();
+	}
+
+	getStoredGrass() {
+		return this.mawer.grassStored
 	}
 
 	growTiles(quantity) {
@@ -61,6 +72,11 @@ export default class Field {
 
 	}
 
+	showValues(bool) {
+		this.debugStats.showValues = bool;
+		this.renderAll();
+	}
+
 	renderMawedCells() {
 		// Draining mawedCells until empty
 		while (this.mawedCells.length) {
@@ -71,12 +87,12 @@ export default class Field {
 	update(growthRate) {
 		this.renderMawedCells();
 		this.growTiles(growthRate);
-		let valueMawed = 0;
 		this.renderMawer();
-		for (let i = 0; i < this.mawer.speed; i++) {
-			valueMawed += this.maw();
-			this.mawer.progress(this.size);
-		}
+		let mawedCells = this.mawer.maw(this.size);
+		this.mawedCells = mawedCells.map(pos => this.getCell(...pos))
+		this.mawer.harvest(this.mawedCells)
+		let valueMawed = this.mawer.getGrass();
+		this.debugStats.grassMawed += valueMawed;
 		return valueMawed;
 	}
 
@@ -97,6 +113,11 @@ export default class Field {
 		for (let cell of this.cells) {
 			this.renderCell(cell);
 		}
+		this.renderMawer();
+	}
+
+	initiate() {
+		this.renderAll();
 		this.maw();
 		this.renderMawer()
 	}
@@ -109,5 +130,12 @@ export default class Field {
 			this.cellSize,
 			this.cellSize
 		);
+		if (this.debugStats.showValues) {
+			this.ctx.font = `${this.cellSize / 4}px Arial`;
+			this.ctx.fillStyle = hsl(360, 100, 100);
+			const value = cell.value || 0;
+			this.ctx.fillText(value.toPrecision(2).replace(/\.?0+$/, ""), (cell.x * this.cellSize) + (this.cellSize / 2),
+				cell.y * this.cellSize + (this.cellSize / 2))
+		}
 	}
 }
