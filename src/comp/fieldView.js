@@ -27,13 +27,17 @@ export default function FieldView(props) {
         if (field) field.speedUpMawer();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.mawerSpeed])
-    const fieldStats = field ? field.debugStats : {}
+    useEffect(() => {
+        if (field) field.showValues(props.showValues);
+    }, [props.showValues])
+    const fieldStats = field ? field.getDebugStats() : {}
     return (
         <div className="green rounded game">
             <canvas id="canvas"></canvas>
             <Debug 
                 tickRate={props.tickRate} growthRate={props.growthRate} size={props.size}
-                grownCells={fieldStats.grownCellsThisTick} lostCells={fieldStats.overallCellsLost}/>
+                grownCells={fieldStats.grownCellsThisTick} lostCells={fieldStats.overallCellsLost} 
+                grassInMawer={fieldStats.grassInMawer} grassMawed={fieldStats.grassMawed}/>
         </div>
     )
 };

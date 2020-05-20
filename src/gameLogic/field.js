@@ -16,8 +16,15 @@ export default class Field {
 		this.cells = this.initField();
 		this.debugStats = {
 			grownCellsThisTick: 0,
-			overallCellsLost: 0
+			overallCellsLost: 0,
+			grassInMawer: this.getStoredGrass(),
+			grassMawed: 0,
+			showValues: false
 		}
+	}
+
+	getDebugStats = () => {
+		return {...this.debugStats, grassInMawer: this.getStoredGrass()};
 	}
 
 	getCell(x, y) {
@@ -38,11 +45,15 @@ export default class Field {
 		this.size = newSize;
 		this.cellSize = this.ctx.canvas.width / newSize;
 		this.cells = this.initField();
-		this.renderAll();
+		this.initiate();
 	}
 
 	speedUpMawer() {
 		this.mawer.increaseSpeed();
+	}
+
+	getStoredGrass() {
+		return this.mawer.grassStored
 	}
 
 	growTiles(quantity) {
@@ -59,6 +70,11 @@ export default class Field {
 		this.debugStats.grownCellsThisTick = totalGrown;
 		this.debugStats.overallCellsLost += quantity - totalGrown;
 
+	}
+
+	showValues(bool) {
+		this.debugStats.showValues = bool;
+		this.renderAll();
 	}
 
 	renderMawedCells() {
@@ -109,5 +125,12 @@ export default class Field {
 			this.cellSize,
 			this.cellSize
 		);
+		if (this.debugStats.showValues) {
+			this.ctx.font = `${this.cellSize / 4}px Arial`;
+			this.ctx.fillStyle = hsl(360, 100, 100);
+			const value = cell.value || 0;
+			this.ctx.fillText(value.toPrecision(2).replace(/\.?0+$/, ""), (cell.x * this.cellSize) + (this.cellSize / 2),
+				cell.y * this.cellSize + (this.cellSize / 2))
+		}
 	}
 }
