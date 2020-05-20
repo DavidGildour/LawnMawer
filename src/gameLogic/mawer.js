@@ -1,6 +1,4 @@
 import FieldEntity from "./fieldEntity";
-import { breakdownNumber } from "./utils"
-
 export default class Mawer extends FieldEntity {
     constructor(color) {
 				super(0, 0, color);
