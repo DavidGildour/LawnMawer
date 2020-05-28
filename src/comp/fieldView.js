@@ -41,14 +41,21 @@ export default function FieldView(props) {
         if (field) field.toggleValues(props.debug.showValues);
     }, [props.debug.showValues])
     const fieldStats = field ? field.getDebugStats() : {}
-    return (
-        <div className="green rounded game">
-            <canvas id="canvas"></canvas>
+    let debugComponent;
+    if (props.debug.active) {
+        debugComponent =
             <Debug 
                 tickRate={props.tickRate} growthRate={props.growthRate} size={props.size}
                 grownCells={fieldStats.grownCellsThisTick} lostCells={fieldStats.overallCellsLost} 
                 grassInMawer={fieldStats.grassInMawer} grassMawed={fieldStats.grassMawed}
             />
+    } else {
+        debugComponent = null;
+    }
+    return (
+        <div className="green rounded game">
+            <canvas id="canvas"></canvas>
+            {debugComponent}
         </div>
     )
 };
