@@ -72,7 +72,7 @@ export default class Field {
 
 	}
 
-	showValues(bool) {
+	toggleValues(bool) {
 		this.debugStats.showValues = bool;
 		this.renderAll();
 	}

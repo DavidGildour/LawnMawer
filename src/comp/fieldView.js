@@ -38,7 +38,7 @@ export default function FieldView(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.mawerSpeed])
     useEffect(() => {
-        if (field) field.showValues(props.debug.showValues);
+        if (field) field.toggleValues(props.debug.showValues);
     }, [props.debug.showValues])
     const fieldStats = field ? field.getDebugStats() : {}
     return (
