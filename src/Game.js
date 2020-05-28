@@ -50,7 +50,7 @@ class Game extends React.Component {
   genericUpgrade = (upgradeType) => {
     const { cash } = this.state;
     const price = this.state[upgradeType].currentPrice;
-    if (cash.sub(price).ge(0)) {
+    if (price !== Infinity && cash.sub(price).ge(0)) {
       this.state[upgradeType].upgrade();
       this.setState({
         cash: cash.sub(price)

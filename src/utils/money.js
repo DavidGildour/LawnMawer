@@ -20,7 +20,7 @@ export default class Muney {
 
 	/* Arithmetic Operators */
 	add = this.applicableToInt(other => new Muney(this.value + other));
-	sub = this.applicableToInt(other => other === Infinity ? -Infinity : new Muney(this.value - other));
+	sub = this.applicableToInt(other => new Muney(this.value - other));
 	div = this.applicableToInt(other => new Muney(this.value / other));
 	mod = this.applicableToInt(other => new Muney(this.value % other));
 	mult = (float) => {
