@@ -32,9 +32,11 @@ class Game extends React.Component {
       tickRate: Upgrade.fromStatBase('tickRate', grassField.tickRate),
       growthRate: Upgrade.fromStatBase('growthRate', grassField.growthRate),
       mawerSpeed: Upgrade.fromStatBase('mawerSpeed', grassField.mawerSpeed),
-      paused: false,
-      debug: true,
-      valuesShown: false
+      debug: {
+        active: true,
+        paused: false,
+        showValues: false
+      }
     }
   }
 
@@ -59,16 +61,23 @@ class Game extends React.Component {
   upgradeGrowth = () => this.genericUpgrade("growthRate");
   upgradeMawerSpeed = () => this.genericUpgrade("mawerSpeed");
 
-  pauseGame = () => {
-    clearTimeout(this.tickTimeoutId);
-    this.setState({paused: true})
+  toggleDebug = (field) => {
+    this.setState(state => (
+      {
+        debug: {
+          ...state.debug,
+          [field]: !state.debug[field]
+        }
+      }
+    ))
   }
-  resumeGame = () => {
-    this.tick();
-    this.setState({paused: false})
+
+  togglePause = () => {
+    this.toggleDebug('paused')
   }
+
   toggleValues = () => {
-    this.setState({ valuesShown: !this.state.valuesShown})
+    this.toggleDebug('showValues')
   }
 
   tick = (field) => {
@@ -113,10 +122,8 @@ class Game extends React.Component {
           upgradeGrowth={this.upgradeGrowth} growthRatePrice={growthRate.currentPrice} curGrowthRate={growthRate.currentValue}
           upgradeMawerSpeed={this.upgradeMawerSpeed} mawerSpeedPrice={mawerSpeed.currentPrice} curMawerSpeed={mawerSpeed.currentValue}
           godMode={this.godMode}
-          pause={this.pauseGame}
-          resume={this.resumeGame}
+          togglePause={this.togglePause}
           toggleValues={this.toggleValues}
-          paused={this.state.paused}
           debug={debug}
         />
         <FieldView
@@ -127,8 +134,9 @@ class Game extends React.Component {
           grownColor={grownColor}
           mawerColor={mawerColor}
           mawerSpeed={mawerSpeed.currentValue}
-          showValues={this.state.valuesShown}
+          debug={debug}
           tick={this.tick}
+          tickId={this.tickTimeoutId}
         />
       </div>
     );

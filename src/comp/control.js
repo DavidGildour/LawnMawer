@@ -17,8 +17,8 @@ export default function Control(props) {
       currentGrowthRate = `Growing ${props.curGrowthRate} tiles per tick`,
       currentMawerSpeed = `Mawing ${props.curMawerSpeed} tiles per tick`;
     let debugControl = <div></div>
-    if (props.debug) {
-        const timeControl = props.paused ? <button onClick={props.resume}>Resume</button> : <button onClick={props.pause}>Pause</button>
+    if (props.debug.active) {
+        const timeControl = <button onClick={props.togglePause}>{props.debug.paused ? 'Resume' : 'Pause'}</button>
         const gridValues = <button onClick={props.toggleValues}>Show grid values</button>
         const godMode = <button onClick={props.godMode}>Add cash</button>
     debugControl = <div>Debug stuff:{gridValues}{timeControl}{godMode}</div>

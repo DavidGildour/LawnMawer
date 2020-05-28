@@ -88,10 +88,10 @@ export default class Field {
 		this.renderMawedCells();
 		this.growTiles(growthRate);
 		this.renderMawer();
-		let mawedCells = this.mawer.maw(this.size);
+		const mawedCells = this.mawer.maw(this.size);
 		this.mawedCells = mawedCells.map(pos => this.getCell(...pos))
 		this.mawer.harvest(this.mawedCells)
-		let valueMawed = this.mawer.getGrass();
+		const valueMawed = this.mawer.getGrass();
 		this.debugStats.grassMawed += valueMawed;
 		return valueMawed;
 	}

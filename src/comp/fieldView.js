@@ -19,6 +19,16 @@ export default function FieldView(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    const { paused } = props.debug;
+    const { tickId } = props;
+    useEffect(() => {
+        if (field && !paused) {
+          props.tick(field);
+        } else {
+          clearTimeout(tickId);
+        }
+    }, [paused])
+
     useEffect(() => {
         if (field) field.resize(props.size);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -28,8 +38,8 @@ export default function FieldView(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.mawerSpeed])
     useEffect(() => {
-        if (field) field.showValues(props.showValues);
-    }, [props.showValues])
+        if (field) field.showValues(props.debug.showValues);
+    }, [props.debug.showValues])
     const fieldStats = field ? field.getDebugStats() : {}
     return (
         <div className="green rounded game">
@@ -37,7 +47,8 @@ export default function FieldView(props) {
             <Debug 
                 tickRate={props.tickRate} growthRate={props.growthRate} size={props.size}
                 grownCells={fieldStats.grownCellsThisTick} lostCells={fieldStats.overallCellsLost} 
-                grassInMawer={fieldStats.grassInMawer} grassMawed={fieldStats.grassMawed}/>
+                grassInMawer={fieldStats.grassInMawer} grassMawed={fieldStats.grassMawed}
+            />
         </div>
     )
 };
