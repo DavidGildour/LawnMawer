@@ -1,30 +1,41 @@
-import Cell from './cell';
-import { map, hsl, randInt } from '../utils/utils';
+import Grass from './grass';
+import { hsl, randInt } from '../utils/utils';
+import Mawer from './mawer';
+
+const GROWTH_PER_TICK = 0.04;
 
 export default class Field {
-	constructor(ctx, baseColor, size) {
-		this.mawPos = [0, 0];
+	constructor(ctx, baseColor, grownColor, mawerColor, size) {
+		this.mawer = new Mawer(mawerColor);
 		this.mawedCells = [];
 		this.size = size;
 		this.ctx = ctx;
 		this.baseColor = baseColor;
+		this.grownColor = grownColor;
 		this.cellSize = ctx.canvas.width / size;
 		this.cells = this.initField();
-		this.stats = {
+		this.debugStats = {
 			grownCellsThisTick: 0,
-			overallCellsLost: 0
+			overallCellsLost: 0,
+			grassInMawer: this.getStoredGrass(),
+			grassMawed: 0,
+			showValues: false
 		}
 	}
 
+	getDebugStats = () => {
+		return {...this.debugStats, grassInMawer: this.getStoredGrass()};
+	}
+
 	getCell(x, y) {
-		return this.cells[x * this.size + y]
+		return this.cells[x * this.size + y];
 	}
 
 	initField() {
 		const cells = [];
 		for (let i = 0; i < this.size; i++) {
 			for (let j = 0; j < this.size; j++) {
-				cells.push(new Cell(i, j));
+				cells.push(new Grass(i, j, this.baseColor, this.grownColor));
 			}
 		}
 		return cells;
@@ -34,91 +45,97 @@ export default class Field {
 		this.size = newSize;
 		this.cellSize = this.ctx.canvas.width / newSize;
 		this.cells = this.initField();
-		this.renderAll();
+		this.initiate();
+	}
+
+	speedUpMawer() {
+		this.mawer.increaseSpeed();
+	}
+
+	getStoredGrass() {
+		return this.mawer.grassStored
 	}
 
 	growTiles(quantity) {
 		let totalGrown = 0;
-		// this is a bottle neck - try to remove it
 		for (let i = 0; i < quantity; i++) {
 			const [x, y] = [randInt(this.size), randInt(this.size)];
 			const cell = this.getCell(x, y);
 			if (cell.value < 1) {
-				cell.value = Math.min(cell.value + 0.1, 1);
-				this.renderCell(cell, this.baseColor);
+				cell.value = Math.min(cell.value + GROWTH_PER_TICK, 1);
+				this.renderCell(cell);
 				totalGrown++;
 			}
 		}
-		this.stats.grownCellsThisTick = totalGrown;
-		this.stats.overallCellsLost += quantity - totalGrown;
+		this.debugStats.grownCellsThisTick = totalGrown;
+		this.debugStats.overallCellsLost += quantity - totalGrown;
 
 	}
 
+	toggleValues(bool) {
+		this.debugStats.showValues = bool;
+		this.renderAll();
+	}
+
 	renderMawedCells() {
-		for (const mawedCell of this.mawedCells) {
-			this.renderCell(mawedCell, this.baseColor);
+		// Draining mawedCells until empty
+		while (this.mawedCells.length) {
+			this.renderCell(this.mawedCells.pop());
 		}
 	}
 
 	update(growthRate) {
 		this.renderMawedCells();
 		this.growTiles(growthRate);
-		const valueMawed = this.mawAndRender();
-		this.progressMawer();
+		this.renderMawer();
+		const mawedCells = this.mawer.maw(this.size);
+		this.mawedCells = mawedCells.map(pos => this.getCell(...pos))
+		this.mawer.harvest(this.mawedCells)
+		const valueMawed = this.mawer.getGrass();
+		this.debugStats.grassMawed += valueMawed;
 		return valueMawed;
 	}
 
-	mawAndRender() {
-		const [x, y] = this.mawPos;
+	maw() {
+		const [x, y] = this.mawer.getPos();
 		const mawCell = this.getCell(x, y);
-		this.mawedCells = [mawCell];
+		this.mawedCells.push(mawCell);
 		const valueMawed = mawCell.value;
 		mawCell.value = 0;
-		this.renderCell(mawCell, [0, 100, 40]);
 		return valueMawed;
 	}
 
-	progressMawer() {
-		let [x, y] = this.mawPos;
-		if (y % 2) {
-			if (x > 0) {
-				x--;
-			} else {
-				y++;
-			}
-		} else {
-			if (x + 1 < this.size) {
-				x++;
-			} else {
-				y++;
-			}
-		}
-		if (y + 1 > this.size) {
-			y = 0;
-			x = 0;
-		}
-		this.mawPos = [x, y];
+	renderMawer() {
+		this.renderCell(this.mawer);
 	}
 
 	renderAll() {
 		for (let cell of this.cells) {
-			this.renderCell(cell, this.baseColor);
+			this.renderCell(cell);
 		}
-		this.mawAndRender();
+		this.renderMawer();
 	}
 
-	renderCell(cell, c) {
-		if (c.length === 2) {
-			const fullColor = [...c, map(1 - cell.value, 0, 1, 20, 40)];
-			this.ctx.fillStyle = hsl(...fullColor);
-		} else {
-			this.ctx.fillStyle = hsl(...c);
-		}
+	initiate() {
+		this.renderAll();
+		this.maw();
+		this.renderMawer()
+	}
+
+	renderCell(cell) {
+		this.ctx.fillStyle = hsl(...cell.color);
 		this.ctx.fillRect(
 			cell.x * this.cellSize,
 			cell.y * this.cellSize,
 			this.cellSize,
 			this.cellSize
 		);
+		if (this.debugStats.showValues) {
+			this.ctx.font = `${this.cellSize / 4}px Arial`;
+			this.ctx.fillStyle = hsl(360, 100, 100);
+			const value = cell.value || 0;
+			this.ctx.fillText(value.toPrecision(2).replace(/\.?0+$/, ""), (cell.x * this.cellSize) + (this.cellSize / 2),
+				cell.y * this.cellSize + (this.cellSize / 2))
+		}
 	}
 }

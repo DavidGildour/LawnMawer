@@ -6,64 +6,89 @@ import Control from './comp/control';
 import FieldView from './comp/fieldView';
 
 import Config from './gameLogic/config';
+import Upgrade from './gameLogic/upgrade';
+
 
 import Muney from './utils/money';
 
 class Game extends React.Component {
   constructor(props) {
     super(props);
-    const baseConfig = new Config(
-      [113, 100],
-      1,
-      {
-        size: new Muney(1000),
-        tickRate: new Muney(5),
-        growthRate: new Muney(10),
-      }
-    );
+    const grassField = new Config({
+      baseColor: [113, 100, 40],
+      grownColor: [113, 100, 20],
+      mawerColor: [0, 100, 40],
+      cashMultiplier: 1,
+      fieldSizeBasePrice: new Muney(1000),
+      growthRateBasePrice: new Muney(15),
+      tickRateBasePrice: new Muney(5),
+      mawerSpeedBasePrice: new Muney(50),
+    });
     this.state = {
       cash: new Muney(0),
-      cfg: baseConfig,
-      baseColor: baseConfig.baseColor,
-      size: baseConfig.sizes[0],
-      sizePrice: baseConfig.basePrices.size,
-      tickRate: baseConfig.tickRates[0],
-      tickRatePrice: baseConfig.basePrices.tickRate,
-      growthRate: baseConfig.growthRates[0],
-      growthRatePrice: baseConfig.basePrices.growthRate,
+      cashMultiplier: grassField.cashMultpiler,
+      baseColor: grassField.baseColor,
+      grownColor: grassField.grownColor,
+      mawerColor: grassField.mawerColor,
+      fieldSize: Upgrade.fromStatBase('fieldSize', grassField.fieldSize),
+      tickRate: Upgrade.fromStatBase('tickRate', grassField.tickRate),
+      growthRate: Upgrade.fromStatBase('growthRate', grassField.growthRate),
+      mawerSpeed: Upgrade.fromStatBase('mawerSpeed', grassField.mawerSpeed),
+      debug: {
+        active: true,
+        paused: false,
+        showValues: false
+      }
     }
   }
 
   calculateIncome = (value) => {
     // TODO: more sophisticated way of calculating income
-    return Math.round(this.state.cfg.multiplier * value);
+    return Math.round(this.state.cashMultiplier * value);
   }
 
   genericUpgrade = (upgradeType) => {
-    const { cfg, cash } = this.state;
-    const current = this.state[upgradeType];
-    const newValue = cfg.getNext(upgradeType, current);
-    const price = this.state[upgradeType + "Price"];
-    if (newValue && cash.sub(price).ge(0)) {
+    const { cash } = this.state;
+    const price = this.state[upgradeType].currentPrice;
+    if (cash.sub(price).ge(0)) {
+      this.state[upgradeType].upgrade();
       this.setState({
-        [upgradeType]: newValue,
-        cash: cash.sub(price),
-        [upgradeType + "Price"]: price.mult(1.2),
+        cash: cash.sub(price)
       });
     }
   }
 
   upgradeTick = () => this.genericUpgrade("tickRate");
-  upgradeSize = () => this.genericUpgrade("size");
+  upgradeSize = () => this.genericUpgrade("fieldSize");
   upgradeGrowth = () => this.genericUpgrade("growthRate");
+  upgradeMawerSpeed = () => this.genericUpgrade("mawerSpeed");
+
+  toggleDebug = (field) => {
+    this.setState(state => (
+      {
+        debug: {
+          ...state.debug,
+          [field]: !state.debug[field]
+        }
+      }
+    ))
+  }
+
+  togglePause = () => {
+    this.toggleDebug('paused')
+  }
+
+  toggleValues = () => {
+    this.toggleDebug('showValues')
+  }
 
   tick = (field) => {
     const { tickRate, growthRate } = this.state;
 
-    const rawValueMawed = field.update(growthRate);
+    const rawValueMawed = field.update(growthRate.currentValue);
     const income = this.calculateIncome(rawValueMawed);
 
-    setTimeout(this.tick, tickRate, field);
+    this.tickTimeoutId = setTimeout(this.tick, tickRate.currentValue, field);
     if (income > 0) {
       this.setState(state => ({
         cash: state.cash.add(income)
@@ -81,30 +106,39 @@ class Game extends React.Component {
     const {
       cash,
       baseColor,
-      size, sizePrice,
-      tickRate, tickRatePrice,
-      growthRate, growthRatePrice,
+      grownColor,
+      mawerColor,
+      fieldSize, 
+      tickRate, 
+      growthRate,
+      mawerSpeed,
+      debug
     } = this.state;
-    const ticksPerSecond = (1000 / tickRate).toPrecision(4).replace(/\.?0+$/, "");
-    const currentTickRate = `${ticksPerSecond} ticks per second`,
-      currentSize = `${size} x ${size} tiles`,
-      currentGrowthRate = `Growing ${growthRate} tiles per tick`;
     return (
       <div className="Game">
         <Header />
         <Control
           cash={cash}
-          upgradeSize={this.upgradeSize} sizePrice={sizePrice} curSize={currentSize}
-          upgradeTick={this.upgradeTick} tickRatePrice={tickRatePrice} curTickRate={currentTickRate}
-          upgradeGrowth={this.upgradeGrowth} growthRatePrice={growthRatePrice} curGrowthRate={currentGrowthRate}
+          upgradeSize={this.upgradeSize} sizePrice={fieldSize.currentPrice} curSize={fieldSize.currentValue}
+          upgradeTick={this.upgradeTick} tickRatePrice={tickRate.currentPrice} curTickRate={tickRate.currentValue}
+          upgradeGrowth={this.upgradeGrowth} growthRatePrice={growthRate.currentPrice} curGrowthRate={growthRate.currentValue}
+          upgradeMawerSpeed={this.upgradeMawerSpeed} mawerSpeedPrice={mawerSpeed.currentPrice} curMawerSpeed={mawerSpeed.currentValue}
           godMode={this.godMode}
+          togglePause={this.togglePause}
+          toggleValues={this.toggleValues}
+          debug={debug}
         />
         <FieldView
-          size={size}
-          tickRate={tickRate}
-          growthRate={growthRate}
+          size={fieldSize.currentValue}
+          tickRate={tickRate.currentValue}
+          growthRate={growthRate.currentValue}
           baseColor={baseColor}
+          grownColor={grownColor}
+          mawerColor={mawerColor}
+          mawerSpeed={mawerSpeed.currentValue}
+          debug={debug}
           tick={this.tick}
+          tickId={this.tickTimeoutId}
         />
       </div>
     );
