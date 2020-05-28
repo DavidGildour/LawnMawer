@@ -9,6 +9,8 @@ import Config from './gameLogic/config';
 import Upgrade from './gameLogic/upgrade';
 
 
+import Muney from './utils/money';
+
 class Game extends React.Component {
   constructor(props) {
     super(props);
@@ -17,13 +19,13 @@ class Game extends React.Component {
       grownColor: [113, 100, 20],
       mawerColor: [0, 100, 40],
       cashMultiplier: 1,
-      fieldSizeBasePrice: 1000,
-      growthRateBasePrice: 15,
-      tickRateBasePrice: 5,
-      mawerSpeedBasePrice: 50,
+      fieldSizeBasePrice: new Muney(1000),
+      growthRateBasePrice: new Muney(15),
+      tickRateBasePrice: new Muney(5),
+      mawerSpeedBasePrice: new Muney(50),
     });
     this.state = {
-      cash: 0,
+      cash: new Muney(0),
       cashMultiplier: grassField.cashMultpiler,
       baseColor: grassField.baseColor,
       grownColor: grassField.grownColor,
@@ -48,10 +50,10 @@ class Game extends React.Component {
   genericUpgrade = (upgradeType) => {
     const { cash } = this.state;
     const price = this.state[upgradeType].currentPrice;
-    if (cash - price >= 0) {
+    if (cash.sub(price).ge(0)) {
       this.state[upgradeType].upgrade();
       this.setState({
-        cash: cash - price
+        cash: cash.sub(price)
       });
     }
   }
@@ -89,14 +91,14 @@ class Game extends React.Component {
     this.tickTimeoutId = setTimeout(this.tick, tickRate.currentValue, field);
     if (income > 0) {
       this.setState(state => ({
-        cash: state.cash + income
+        cash: state.cash.add(income)
       }));
     }
   }
 
   godMode = () => {
     this.setState(state => ({
-      cash: state.cash + 100_000
+      cash: state.cash.add(100_000)
     }))
   }
 

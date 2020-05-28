@@ -1,5 +1,5 @@
 import FieldEntity from "./fieldEntity";
-import { mapHSL } from "./utils";
+import { mapHSL } from "../utils/utils";
 
 export default class Grass extends FieldEntity {
 	constructor(x, y, baseColor, grownColor) {

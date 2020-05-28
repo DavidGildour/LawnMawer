@@ -1,4 +1,4 @@
-import { getNextValue } from './utils';
+import { getNextValue } from '../utils/utils';
 
 
 export default class Upgrade {
@@ -30,7 +30,7 @@ export default class Upgrade {
 
   upgrade = () => {
     let [nextValue, final] = getNextValue(this.generator);
-    this.currentPrice = !final ? Math.ceil(this.currentPrice * this.priceMultiplier) : Infinity;
+    this.currentPrice = !final ? this.currentPrice.mult(this.priceMultiplier) : Infinity;
     this.currentValue = nextValue;
     return this.currentValue;
   }

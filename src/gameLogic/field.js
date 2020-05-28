@@ -1,5 +1,5 @@
 import Grass from './grass';
-import { hsl, randInt } from './utils';
+import { hsl, randInt } from '../utils/utils';
 import Mawer from './mawer';
 
 const GROWTH_PER_TICK = 0.04;
