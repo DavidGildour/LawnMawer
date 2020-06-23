@@ -13,7 +13,7 @@ export default function FieldView(props) {
         const ctx = canvas.getContext("2d");
         const newField = new Field(ctx, props.baseColor, props.grownColor, props.mawerColor, props.size);
         newField.initiate();
-        newField.mawer.progress(props.size);
+        // newField.mawer.progress(props.size);
         setTimeout(props.tick, props.tickRate, newField);
         setField(newField)
     // eslint-disable-next-line react-hooks/exhaustive-deps

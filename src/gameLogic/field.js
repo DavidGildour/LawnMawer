@@ -123,19 +123,24 @@ export default class Field {
 	}
 
 	renderCell(cell) {
-		this.ctx.fillStyle = hsl(...cell.color);
-		this.ctx.fillRect(
-			cell.x * this.cellSize,
-			cell.y * this.cellSize,
-			this.cellSize,
-			this.cellSize
-		);
-		if (this.debugStats.showValues) {
-			this.ctx.font = `${this.cellSize / 4}px Arial`;
-			this.ctx.fillStyle = hsl(360, 100, 100);
-			const value = cell.value || 0;
-			this.ctx.fillText(value.toPrecision(2).replace(/\.?0+$/, ""), (cell.x * this.cellSize) + (this.cellSize / 2),
-				cell.y * this.cellSize + (this.cellSize / 2))
+		const { width, height } = cell.size;
+		for (let i = 0; i < height; i++) {
+			for (let j = 0; j < width; j++) {
+				this.ctx.fillStyle = hsl(...cell.color);
+				this.ctx.fillRect(
+					(cell.x + j) * this.cellSize,
+					(cell.y + i) * this.cellSize,
+					this.cellSize,
+					this.cellSize
+				);
+				if (this.debugStats.showValues) {
+					this.ctx.font = `${this.cellSize / 4}px Arial`;
+					this.ctx.fillStyle = hsl(360, 100, 100);
+					const value = cell.value || 0;
+					this.ctx.fillText(value.toPrecision(2).replace(/\.?0+$/, ""), (cell.x * this.cellSize) + (this.cellSize / 2),
+						cell.y * this.cellSize + (this.cellSize / 2))
+				}
+			}
 		}
 	}
 }
