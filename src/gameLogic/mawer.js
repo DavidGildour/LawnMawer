@@ -4,11 +4,11 @@ export default class Mawer extends FieldEntity {
 		super(0, 0, color);
 		this.mawedCells= [];
 		this.speed = 1;
-		this.size = { width: 3, height: 3 };
 		this.grassStored = 0;
 	}
 
 	getPos() { return [this.x, this.y] }
+	resetPos() { [this.x, this.y] = [0, 0]}
 	getArea() {
 		const { width, height } = this.size;
 		const [ x0, y0 ] = this.getPos();
@@ -23,12 +23,9 @@ export default class Mawer extends FieldEntity {
 		return list;
 }
 	increaseSpeed() { this.speed += 1 }
-	increaseSize() {
-		if (this.size.width === this.size.height) {
-			this.size.width++;
-		} else {
-			this.size.height++;
-		}
+	increaseSize(size) {
+		this.size.width = size[0];
+		this.size.height = size[1];
 	}
 
 	progress(fieldSize, resetCell) {
@@ -40,7 +37,7 @@ export default class Mawer extends FieldEntity {
 			return;
 		}
 
-		if ((this.y / height) % 2) {
+		if ((Math.ceil(this.y / height)) % 2) {
 			if (this.x > 0) {
 				this.x = Math.max(this.x - width, 0);
 			} else {

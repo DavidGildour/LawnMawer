@@ -12,7 +12,7 @@ export default function FieldView(props) {
         canvas.height = 400;
         const ctx = canvas.getContext("2d");
         const newField = new Field(ctx, props.baseColor, props.grownColor, props.mawerColor, props.size);
-        newField.initiate();
+        newField.renderAll();
         // newField.mawer.progress(props.size);
         setTimeout(props.tick, props.tickRate, newField);
         setField(newField)
@@ -37,6 +37,10 @@ export default function FieldView(props) {
         if (field) field.speedUpMawer();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.mawerSpeed])
+    useEffect(() => {
+        if (field) field.resizeMawer(props.mawerSize);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.mawerSize])
     useEffect(() => {
         if (field) field.toggleValues(props.debug.showValues);
     }, [props.debug.showValues])

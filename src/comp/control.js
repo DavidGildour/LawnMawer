@@ -21,6 +21,7 @@ export default function Control(props) {
     const currentTickRate = `${ticksPerSecond} ticks per second`,
       currentSize = `${props.curSize} x ${props.curSize} tiles`,
       currentGrowthRate = `Growing ${props.curGrowthRate} tiles per tick`,
+      currentMawerSize = `${props.curMawerSize[0]} x ${props.curMawerSize[1]}`,
       currentMawerSpeed = `Mawing ${props.curMawerSpeed} tiles per tick`;
     let debugControl = <div></div>
     if (props.debug.active) {
@@ -36,6 +37,7 @@ export default function Control(props) {
             <UpgradeButton upgradeFunc={props.upgradeSize} text="Upgrade Field Size" currentPrice={props.sizePrice} currentValue={currentSize} />
             <UpgradeButton upgradeFunc={props.upgradeGrowth} text="Upgrade Growth Rate" currentPrice={props.growthRatePrice} currentValue={currentGrowthRate} />
             <UpgradeButton upgradeFunc={props.upgradeMawerSpeed} text="Upgrade Mawer Speed" currentPrice={props.mawerSpeedPrice} currentValue={currentMawerSpeed} />
+            <UpgradeButton upgradeFunc={props.upgradeMawerSize} text="Upgrade Mawer Size" currentPrice={props.mawerSizePrice} currentValue={currentMawerSize} />
             <UpgradeButton upgradeFunc={props.godMode} text="Add $$$" currentPrice={0} currentValue={100_000} />
             {debugControl}
         </div>
