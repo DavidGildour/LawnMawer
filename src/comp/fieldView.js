@@ -34,6 +34,10 @@ export default function FieldView(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.size])
     useEffect(() => {
+        if (field) field.setGrowthSpeed(props.growthSpeed);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.growthSpeed])
+    useEffect(() => {
         if (field) field.speedUpMawer();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.mawerSpeed])

@@ -23,6 +23,7 @@ class Game extends React.Component {
       growthRateBasePrice: new Muney(15),
       tickRateBasePrice: new Muney(5),
       mawerSpeedBasePrice: new Muney(50),
+      growthSpeedBasePrice: new Muney(900),
     });
     this.state = {
       cash: new Muney(0),
@@ -34,6 +35,7 @@ class Game extends React.Component {
       tickRate: Upgrade.fromStatBase('tickRate', grassField.tickRate),
       growthRate: Upgrade.fromStatBase('growthRate', grassField.growthRate),
       mawerSpeed: Upgrade.fromStatBase('mawerSpeed', grassField.mawerSpeed),
+      growthSpeed: Upgrade.fromStatBase('growthSpeed', grassField.growthSpeed),
       debug: {
         active: true,
         paused: false,
@@ -62,6 +64,7 @@ class Game extends React.Component {
   upgradeSize = () => this.genericUpgrade("fieldSize");
   upgradeGrowth = () => this.genericUpgrade("growthRate");
   upgradeMawerSpeed = () => this.genericUpgrade("mawerSpeed");
+  upgradeGrowthSpeed = () => this.genericUpgrade("growthSpeed");
 
   toggleDebug = (field) => {
     this.setState(state => (
@@ -98,7 +101,7 @@ class Game extends React.Component {
 
   godMode = () => {
     this.setState(state => ({
-      cash: state.cash.add(100_000)
+      cash: state.cash.add(100_000_000)
     }))
   }
 
@@ -112,6 +115,7 @@ class Game extends React.Component {
       tickRate, 
       growthRate,
       mawerSpeed,
+      growthSpeed,
       debug
     } = this.state;
     return (
@@ -123,6 +127,7 @@ class Game extends React.Component {
           upgradeTick={this.upgradeTick} tickRatePrice={tickRate.currentPrice} curTickRate={tickRate.currentValue}
           upgradeGrowth={this.upgradeGrowth} growthRatePrice={growthRate.currentPrice} curGrowthRate={growthRate.currentValue}
           upgradeMawerSpeed={this.upgradeMawerSpeed} mawerSpeedPrice={mawerSpeed.currentPrice} curMawerSpeed={mawerSpeed.currentValue}
+          upgradeGrowthSpeed={this.upgradeGrowthSpeed} growthSpeedPrice={growthSpeed.currentPrice} curGrowthSpeed={growthSpeed.currentValue}
           godMode={this.godMode}
           togglePause={this.togglePause}
           toggleValues={this.toggleValues}
@@ -136,6 +141,7 @@ class Game extends React.Component {
           grownColor={grownColor}
           mawerColor={mawerColor}
           mawerSpeed={mawerSpeed.currentValue}
+          growthSpeed={growthSpeed.currentValue}
           debug={debug}
           tick={this.tick}
           tickId={this.tickTimeoutId}
