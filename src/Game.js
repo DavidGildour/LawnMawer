@@ -23,6 +23,7 @@ class Game extends React.Component {
       growthRateBasePrice: new Muney(15),
       tickRateBasePrice: new Muney(5),
       mawerSpeedBasePrice: new Muney(50),
+      growthSpeedBasePrice: new Muney(900),
       mawerSizeBasePrice: new Muney(50),
     });
     this.state = {
@@ -35,6 +36,7 @@ class Game extends React.Component {
       tickRate: Upgrade.fromStatBase('tickRate', grassField.tickRate),
       growthRate: Upgrade.fromStatBase('growthRate', grassField.growthRate),
       mawerSpeed: Upgrade.fromStatBase('mawerSpeed', grassField.mawerSpeed),
+      growthSpeed: Upgrade.fromStatBase('growthSpeed', grassField.growthSpeed),
       mawerSize: Upgrade.fromStatBase('mawerSize', grassField.mawerSize, () => {
         return Math.pow(this.state.fieldSize.currentValue, 2) > this.state.mawerSize.currentValue[0] * this.state.mawerSize.currentValue[1];
       }),
@@ -66,6 +68,7 @@ class Game extends React.Component {
   upgradeSize = () => this.genericUpgrade("fieldSize");
   upgradeGrowth = () => this.genericUpgrade("growthRate");
   upgradeMawerSpeed = () => this.genericUpgrade("mawerSpeed");
+  upgradeGrowthSpeed = () => this.genericUpgrade("growthSpeed");
   upgradeMawerSize = () => this.genericUpgrade("mawerSize");
 
   toggleDebug = (field) => {
@@ -103,7 +106,7 @@ class Game extends React.Component {
 
   godMode = () => {
     this.setState(state => ({
-      cash: state.cash.add(100_000)
+      cash: state.cash.add(100_000_000)
     }))
   }
 
@@ -117,6 +120,7 @@ class Game extends React.Component {
       tickRate, 
       growthRate,
       mawerSpeed,
+      growthSpeed,
       mawerSize,
       debug
     } = this.state;
@@ -129,6 +133,7 @@ class Game extends React.Component {
           upgradeTick={this.upgradeTick} tickRatePrice={tickRate.currentPrice} curTickRate={tickRate.currentValue}
           upgradeGrowth={this.upgradeGrowth} growthRatePrice={growthRate.currentPrice} curGrowthRate={growthRate.currentValue}
           upgradeMawerSpeed={this.upgradeMawerSpeed} mawerSpeedPrice={mawerSpeed.currentPrice} curMawerSpeed={mawerSpeed.currentValue}
+          upgradeGrowthSpeed={this.upgradeGrowthSpeed} growthSpeedPrice={growthSpeed.currentPrice} curGrowthSpeed={growthSpeed.currentValue}
           upgradeMawerSize={this.upgradeMawerSize} mawerSizePrice={mawerSize.currentPrice} curMawerSize={mawerSize.currentValue}
           godMode={this.godMode}
           togglePause={this.togglePause}
@@ -143,6 +148,7 @@ class Game extends React.Component {
           grownColor={grownColor}
           mawerColor={mawerColor}
           mawerSpeed={mawerSpeed.currentValue}
+          growthSpeed={growthSpeed.currentValue}
           mawerSize={mawerSize.currentValue}
           debug={debug}
           tick={this.tick}

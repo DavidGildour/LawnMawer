@@ -2,8 +2,6 @@ import Grass from './grass';
 import { hsl, randInt } from '../utils/utils';
 import Mawer from './mawer';
 
-const GROWTH_PER_TICK = 0.1;
-
 export default class Field {
 	constructor(ctx, baseColor, grownColor, mawerColor, size) {
 		this.mawer = new Mawer(mawerColor);
@@ -14,6 +12,7 @@ export default class Field {
 		this.grownColor = grownColor;
 		this.cellSize = ctx.canvas.width / size;
 		this.cells = this.initField();
+		this.growthPerTick = 0.05
 		this.debugStats = {
 			grownCellsThisTick: 0,
 			overallCellsLost: 0,
@@ -52,6 +51,10 @@ export default class Field {
 		this.mawer.increaseSpeed();
 	}
 
+	setGrowthSpeed(newSpeed) {
+		this.growthPerTick = newSpeed;
+	}
+	
 	resizeMawer(size) {
 		const cellsToRerender = this.mawer.getArea().map(pos => this.getCell(...pos));
 		this.mawer.increaseSize(size);
@@ -70,7 +73,7 @@ export default class Field {
 			const [x, y] = [randInt(this.size), randInt(this.size)];
 			const cell = this.getCell(x, y);
 			if (cell.value < 1) {
-				cell.value = Math.min(cell.value + GROWTH_PER_TICK, 1);
+				cell.value = Math.min(cell.value + this.growthPerTick, 1);
 				this.renderCell(cell);
 				totalGrown++;
 			}
