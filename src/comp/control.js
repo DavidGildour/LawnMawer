@@ -33,7 +33,7 @@ export default function Control(props) {
     }
     return (
         <div className="green rounded upgrades">
-            <div>{props.cash.toString()}</div>
+            <div>{props.cash.toLongString()}</div>
             <UpgradeButton upgradeFunc={props.upgradeTick} text="Upgrade Tick Rate" currentPrice={props.tickRatePrice} currentValue={currentTickRate} />
             <UpgradeButton upgradeFunc={props.upgradeSize} text="Upgrade Field Size" currentPrice={props.sizePrice} currentValue={currentSize} />
             <UpgradeButton upgradeFunc={props.upgradeGrowth} text="Upgrade Growth Rate" currentPrice={props.growthRatePrice} currentValue={currentGrowthRate} />
