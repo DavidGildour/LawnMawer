@@ -1,4 +1,4 @@
-import { tickRateGen, fieldSizeGen, growthRateGen, mawerSpeedGen } from './baseConfig';
+import { tickRateGen, fieldSizeGen, growthRateGen, mawerSpeedGen, mawerSizeGen } from './baseConfig';
 
 class StatBase {
     constructor(basePrice, valueRange, priceMultiplier) {
@@ -10,7 +10,7 @@ class StatBase {
 
 export default class Config {
     constructor({ baseColor, grownColor, mawerColor, tickRateBasePrice, growthRateBasePrice,
-                  fieldSizeBasePrice, mawerSpeedBasePrice, cashMultiplier }) {
+                  fieldSizeBasePrice, mawerSpeedBasePrice, mawerSizeBasePrice, cashMultiplier }) {
         this.baseColor = baseColor;
         this.grownColor = grownColor;
         this.mawerColor = mawerColor;
@@ -18,7 +18,8 @@ export default class Config {
         this.tickRate = new StatBase(tickRateBasePrice, tickRateGen, 1.2);
         this.growthRate = new StatBase(growthRateBasePrice, growthRateGen, 1.2);
         this.mawerSpeed = new StatBase(mawerSpeedBasePrice, mawerSpeedGen, 1.5);
-        this.cashMultpiler = cashMultiplier;
+        this.mawerSize = new StatBase(mawerSizeBasePrice, mawerSizeGen, 1.5);
+        this.cashMultplier = cashMultiplier;
     }
 
     getNext = what => this[what].valueRange.nextValue();

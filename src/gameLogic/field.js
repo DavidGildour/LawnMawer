@@ -2,12 +2,12 @@ import Grass from './grass';
 import { hsl, randInt } from '../utils/utils';
 import Mawer from './mawer';
 
-const GROWTH_PER_TICK = 0.04;
+const GROWTH_PER_TICK = 0.1;
 
 export default class Field {
 	constructor(ctx, baseColor, grownColor, mawerColor, size) {
 		this.mawer = new Mawer(mawerColor);
-		this.mawedCells = [];
+		this.cellsToRerender = [];
 		this.size = size;
 		this.ctx = ctx;
 		this.baseColor = baseColor;
@@ -45,15 +45,23 @@ export default class Field {
 		this.size = newSize;
 		this.cellSize = this.ctx.canvas.width / newSize;
 		this.cells = this.initField();
-		this.initiate();
+		this.renderAll();
 	}
 
 	speedUpMawer() {
 		this.mawer.increaseSpeed();
 	}
 
+	resizeMawer(size) {
+		const cellsToRerender = this.mawer.getArea().map(pos => this.getCell(...pos));
+		this.mawer.increaseSize(size);
+		this.mawer.resetPos();
+		this.renderCells(cellsToRerender);
+		this.renderMawer();
+	}
+
 	getStoredGrass() {
-		return this.mawer.grassStored
+		return this.mawer.grassStored;
 	}
 
 	growTiles(quantity) {
@@ -77,32 +85,28 @@ export default class Field {
 		this.renderAll();
 	}
 
-	renderMawedCells() {
-		// Draining mawedCells until empty
-		while (this.mawedCells.length) {
-			this.renderCell(this.mawedCells.pop());
+	rerenderStaleCells() {
+		// Draining until empty
+		while (this.cellsToRerender.length) {
+			this.renderCell(this.cellsToRerender.pop());
 		}
 	}
 
 	update(growthRate) {
-		this.renderMawedCells();
-		this.growTiles(growthRate);
-		this.renderMawer();
-		const mawedCells = this.mawer.maw(this.size);
-		this.mawedCells = mawedCells.map(pos => this.getCell(...pos))
-		this.mawer.harvest(this.mawedCells)
+		const mawedCells = this.mawer.maw(this.size).map(pos => this.getCell(...pos));
+		this.addCellsToRerender(mawedCells);
+		this.mawer.harvest(mawedCells)
 		const valueMawed = this.mawer.getGrass();
 		this.debugStats.grassMawed += valueMawed;
+
+		this.rerenderStaleCells();
+		this.growTiles(growthRate);
+		this.renderMawer();
 		return valueMawed;
 	}
 
-	maw() {
-		const [x, y] = this.mawer.getPos();
-		const mawCell = this.getCell(x, y);
-		this.mawedCells.push(mawCell);
-		const valueMawed = mawCell.value;
-		mawCell.value = 0;
-		return valueMawed;
+	addCellsToRerender(cells) {
+		this.cellsToRerender = this.cellsToRerender.concat(cells);
 	}
 
 	renderMawer() {
@@ -110,32 +114,35 @@ export default class Field {
 	}
 
 	renderAll() {
-		for (let cell of this.cells) {
-			this.renderCell(cell);
-		}
+		this.renderCells(this.cells);
 		this.renderMawer();
 	}
 
-	initiate() {
-		this.renderAll();
-		this.maw();
-		this.renderMawer()
+	renderCells(cells) {
+		for (let cell of cells) {
+			this.renderCell(cell);
+		}
 	}
 
 	renderCell(cell) {
-		this.ctx.fillStyle = hsl(...cell.color);
-		this.ctx.fillRect(
-			cell.x * this.cellSize,
-			cell.y * this.cellSize,
-			this.cellSize,
-			this.cellSize
-		);
-		if (this.debugStats.showValues) {
-			this.ctx.font = `${this.cellSize / 4}px Arial`;
-			this.ctx.fillStyle = hsl(360, 100, 100);
-			const value = cell.value || 0;
-			this.ctx.fillText(value.toPrecision(2).replace(/\.?0+$/, ""), (cell.x * this.cellSize) + (this.cellSize / 2),
-				cell.y * this.cellSize + (this.cellSize / 2))
+		const { width, height } = cell.size;
+		for (let i = 0; i < height; i++) {
+			for (let j = 0; j < width; j++) {
+				this.ctx.fillStyle = hsl(...cell.color);
+				this.ctx.fillRect(
+					(cell.x + j) * this.cellSize,
+					(cell.y + i) * this.cellSize,
+					this.cellSize,
+					this.cellSize
+				);
+				if (this.debugStats.showValues) {
+					this.ctx.font = `${this.cellSize / 4}px Arial`;
+					this.ctx.fillStyle = hsl(360, 100, 100);
+					const value = cell.value || 0;
+					this.ctx.fillText(value.toPrecision(2).replace(/\.?0+$/, ""), (cell.x * this.cellSize) + (this.cellSize / 2),
+						cell.y * this.cellSize + (this.cellSize / 2))
+				}
+			}
 		}
 	}
 }
