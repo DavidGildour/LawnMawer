@@ -22,7 +22,7 @@ export default class Mawer extends FieldEntity {
 		}
 		return list;
 }
-	increaseSpeed() { this.speed += 1 }
+	increaseSpeed(newSpeed) { this.speed = newSpeed }
 	increaseSize(size) {
 		this.size.width = size[0];
 		this.size.height = size[1];

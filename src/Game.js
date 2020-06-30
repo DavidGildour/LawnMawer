@@ -5,8 +5,7 @@ import Header from './comp/header';
 import Control from './comp/control';
 import FieldView from './comp/fieldView';
 
-import Config from './gameLogic/config';
-import Upgrade from './gameLogic/upgrade';
+import fields from './gameLogic/fields'
 
 
 import Muney from './utils/money';
@@ -14,32 +13,11 @@ import Muney from './utils/money';
 class Game extends React.Component {
   constructor(props) {
     super(props);
-    const grassField = new Config({
-      baseColor: [113, 100, 40],
-      grownColor: [113, 100, 20],
-      mawerColor: [0, 100, 40],
-      cashMultiplier: 1,
-      fieldSizeBasePrice: new Muney(1000),
-      growthRateBasePrice: new Muney(15),
-      tickRateBasePrice: new Muney(5),
-      mawerSpeedBasePrice: new Muney(50),
-      growthSpeedBasePrice: new Muney(900),
-      mawerSizeBasePrice: new Muney(50),
-    });
+    const grassField = fields.grassField;
     this.state = {
       cash: new Muney(0),
-      cashMultiplier: grassField.cashMultplier,
-      baseColor: grassField.baseColor,
-      grownColor: grassField.grownColor,
-      mawerColor: grassField.mawerColor,
-      fieldSize: Upgrade.fromStatBase('fieldSize', grassField.fieldSize),
-      tickRate: Upgrade.fromStatBase('tickRate', grassField.tickRate),
-      growthRate: Upgrade.fromStatBase('growthRate', grassField.growthRate),
-      mawerSpeed: Upgrade.fromStatBase('mawerSpeed', grassField.mawerSpeed),
-      growthSpeed: Upgrade.fromStatBase('growthSpeed', grassField.growthSpeed),
-      mawerSize: Upgrade.fromStatBase('mawerSize', grassField.mawerSize, () => {
-        return Math.pow(this.state.fieldSize.currentValue, 2) > this.state.mawerSize.currentValue[0] * this.state.mawerSize.currentValue[1];
-      }),
+      currentField: grassField,
+      fields: [],
       debug: {
         active: true,
         paused: false,
@@ -50,14 +28,14 @@ class Game extends React.Component {
 
   calculateIncome = (value) => {
     // TODO: more sophisticated way of calculating income
-    return Math.round(this.state.cashMultiplier * value);
+    return Math.round(this.state.currentField.cashMultiplier * value);
   }
 
   genericUpgrade = (upgradeType) => {
     const { cash } = this.state;
-    const price = this.state[upgradeType].currentPrice;
+    const price = this.state.currentField[upgradeType].currentPrice;
     if (price !== Infinity && cash.sub(price).ge(0)) {
-      this.state[upgradeType].upgrade();
+      this.state.currentField[upgradeType].upgrade();
       this.setState({
         cash: cash.sub(price)
       });
@@ -90,8 +68,8 @@ class Game extends React.Component {
     this.toggleDebug('showValues')
   }
 
-  tick = (field) => {
-    const { tickRate, growthRate } = this.state;
+  tick = (field, renderer) => {
+    const { tickRate, growthRate } = this.state.currentField;
 
     const rawValueMawed = field.update(growthRate.currentValue);
     const income = this.calculateIncome(rawValueMawed);
@@ -102,6 +80,9 @@ class Game extends React.Component {
         cash: state.cash.add(income)
       }));
     }
+    if (field === this.currentField) {
+      renderer.update()
+    }
   }
 
   godMode = () => {
@@ -111,8 +92,8 @@ class Game extends React.Component {
   }
 
   render() {
+    const { debug, cash } = this.state;
     const {
-      cash,
       baseColor,
       grownColor,
       mawerColor,
@@ -122,8 +103,7 @@ class Game extends React.Component {
       mawerSpeed,
       growthSpeed,
       mawerSize,
-      debug
-    } = this.state;
+    } = this.state.currentField;
     return (
       <div className="Game">
         <Header />

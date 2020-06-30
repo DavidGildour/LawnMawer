@@ -3,52 +3,52 @@ import '../css/fieldView.css';
 
 import Field from '../gameLogic/field';
 import Debug from './debug';
+import Renderer from '../gameLogic/renderer';
+import { render } from '@testing-library/react';
+
 
 export default function FieldView(props) {
-    const [field, setField] = useState(null);
+    const [renderer, setRenderer] = useState(new Renderer(document.querySelector("#canvas").getContext('2d')))
     useEffect(() => {
-        const canvas = document.querySelector("#canvas");
-        canvas.width = 400;
-        canvas.height = 400;
-        const ctx = canvas.getContext("2d");
-        const newField = new Field(ctx, props.baseColor, props.grownColor, props.mawerColor, props.size);
-        newField.renderAll();
-        // newField.mawer.progress(props.size);
-        setTimeout(props.tick, props.tickRate, newField);
-        setField(newField)
+        renderer.setField(props.field)
+        renderer.renderAll();
+        if (!props.field.isTickSet) {
+            setTimeout(props.tick, props.tickRate, props.field);
+            props.field.isTickSet = true;
+        }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [props.field]);
 
     const { paused } = props.debug;
     const { tickId } = props;
     useEffect(() => {
-        if (field && !paused) {
-          props.tick(field);
+        if (!paused) {
+          props.tick(props.field);
         } else {
           clearTimeout(tickId);
         }
     }, [paused])
 
     useEffect(() => {
-        if (field) field.resize(props.size);
+        renderer.resize(props.size);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.size])
     useEffect(() => {
-        if (field) field.setGrowthSpeed(props.growthSpeed);
+        props.field.setGrowthSpeed(props.growthSpeed);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.growthSpeed])
     useEffect(() => {
-        if (field) field.speedUpMawer();
+        props.field.speedUpMawer(props.mawerSpeed);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.mawerSpeed])
     useEffect(() => {
-        if (field) field.resizeMawer(props.mawerSize);
+        renderer.resizeMawer(props.mawerSize);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.mawerSize])
     useEffect(() => {
-        if (field) field.toggleValues(props.debug.showValues);
+        renderer.toggleValues(props.debug.showValues);
     }, [props.debug.showValues])
-    const fieldStats = field ? field.getDebugStats() : {}
+    const fieldStats = props.field.getDebugStats();
     let debugComponent;
     if (props.debug.active) {
         debugComponent =

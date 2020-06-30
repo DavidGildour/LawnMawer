@@ -6,10 +6,14 @@ export default class Upgrade {
     this.externalCondition = externalCondition;
     this.name = name;
     this.basePrice = basePrice;
-    this.generator = generator;
+    this.generator = generator();
     this.priceMultiplier = priceMultiplier;
     this._currentPrice = basePrice;
     this.currentValue = this.initValue();
+  }
+
+  setExternalCondition(cond) {
+    this.externalCondition = cond;
   }
 
   get currentPrice() {
