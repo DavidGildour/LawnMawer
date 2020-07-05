@@ -5,8 +5,7 @@ import Header from './comp/header';
 import Control from './comp/control';
 import FieldView from './comp/fieldView';
 
-import fields from './gameLogic/fields'
-
+import fields from './gameLogic/fields';
 
 import Muney from './utils/money';
 
@@ -21,15 +20,15 @@ class Game extends React.Component {
       debug: {
         active: true,
         paused: false,
-        showValues: false
-      }
-    }
+        showValues: false,
+      },
+    };
   }
 
   calculateIncome = (value) => {
     // TODO: more sophisticated way of calculating income
     return Math.round(this.state.currentField.cashMultiplier * value);
-  }
+  };
 
   genericUpgrade = (upgradeType) => {
     const { cash } = this.state;
@@ -37,36 +36,34 @@ class Game extends React.Component {
     if (price !== Infinity && cash.sub(price).ge(0)) {
       this.state.currentField[upgradeType].upgrade();
       this.setState({
-        cash: cash.sub(price)
+        cash: cash.sub(price),
       });
     }
-  }
+  };
 
-  upgradeTick = () => this.genericUpgrade("tickRate");
-  upgradeSize = () => this.genericUpgrade("fieldSize");
-  upgradeGrowth = () => this.genericUpgrade("growthRate");
-  upgradeMawerSpeed = () => this.genericUpgrade("mawerSpeed");
-  upgradeGrowthSpeed = () => this.genericUpgrade("growthSpeed");
-  upgradeMawerSize = () => this.genericUpgrade("mawerSize");
+  upgradeTick = () => this.genericUpgrade('tickRate');
+  upgradeSize = () => this.genericUpgrade('fieldSize');
+  upgradeGrowth = () => this.genericUpgrade('growthRate');
+  upgradeMawerSpeed = () => this.genericUpgrade('mawerSpeed');
+  upgradeGrowthSpeed = () => this.genericUpgrade('growthSpeed');
+  upgradeMawerSize = () => this.genericUpgrade('mawerSize');
 
   toggleDebug = (field) => {
-    this.setState(state => (
-      {
-        debug: {
-          ...state.debug,
-          [field]: !state.debug[field]
-        }
-      }
-    ))
-  }
+    this.setState((state) => ({
+      debug: {
+        ...state.debug,
+        [field]: !state.debug[field],
+      },
+    }));
+  };
 
   togglePause = () => {
-    this.toggleDebug('paused')
-  }
+    this.toggleDebug('paused');
+  };
 
   toggleValues = () => {
-    this.toggleDebug('showValues')
-  }
+    this.toggleDebug('showValues');
+  };
 
   tick = (field, renderer) => {
     const { tickRate, growthRate } = this.state.currentField;
@@ -76,20 +73,20 @@ class Game extends React.Component {
 
     this.tickTimeoutId = setTimeout(this.tick, tickRate.currentValue, field);
     if (income > 0) {
-      this.setState(state => ({
-        cash: state.cash.add(income)
+      this.setState((state) => ({
+        cash: state.cash.add(income),
       }));
     }
     if (field === this.currentField) {
-      renderer.update()
+      renderer.update();
     }
-  }
+  };
 
   godMode = () => {
-    this.setState(state => ({
-      cash: state.cash.add(100_000_000)
-    }))
-  }
+    this.setState((state) => ({
+      cash: state.cash.add(100_000_000),
+    }));
+  };
 
   render() {
     const { debug, cash } = this.state;
@@ -97,8 +94,8 @@ class Game extends React.Component {
       baseColor,
       grownColor,
       mawerColor,
-      fieldSize, 
-      tickRate, 
+      fieldSize,
+      tickRate,
       growthRate,
       mawerSpeed,
       growthSpeed,
@@ -109,12 +106,24 @@ class Game extends React.Component {
         <Header />
         <Control
           cash={cash}
-          upgradeSize={this.upgradeSize} sizePrice={fieldSize.currentPrice} curSize={fieldSize.currentValue}
-          upgradeTick={this.upgradeTick} tickRatePrice={tickRate.currentPrice} curTickRate={tickRate.currentValue}
-          upgradeGrowth={this.upgradeGrowth} growthRatePrice={growthRate.currentPrice} curGrowthRate={growthRate.currentValue}
-          upgradeMawerSpeed={this.upgradeMawerSpeed} mawerSpeedPrice={mawerSpeed.currentPrice} curMawerSpeed={mawerSpeed.currentValue}
-          upgradeGrowthSpeed={this.upgradeGrowthSpeed} growthSpeedPrice={growthSpeed.currentPrice} curGrowthSpeed={growthSpeed.currentValue}
-          upgradeMawerSize={this.upgradeMawerSize} mawerSizePrice={mawerSize.currentPrice} curMawerSize={mawerSize.currentValue}
+          upgradeSize={this.upgradeSize}
+          sizePrice={fieldSize.currentPrice}
+          curSize={fieldSize.currentValue}
+          upgradeTick={this.upgradeTick}
+          tickRatePrice={tickRate.currentPrice}
+          curTickRate={tickRate.currentValue}
+          upgradeGrowth={this.upgradeGrowth}
+          growthRatePrice={growthRate.currentPrice}
+          curGrowthRate={growthRate.currentValue}
+          upgradeMawerSpeed={this.upgradeMawerSpeed}
+          mawerSpeedPrice={mawerSpeed.currentPrice}
+          curMawerSpeed={mawerSpeed.currentValue}
+          upgradeGrowthSpeed={this.upgradeGrowthSpeed}
+          growthSpeedPrice={growthSpeed.currentPrice}
+          curGrowthSpeed={growthSpeed.currentValue}
+          upgradeMawerSize={this.upgradeMawerSize}
+          mawerSizePrice={mawerSize.currentPrice}
+          curMawerSize={mawerSize.currentValue}
           godMode={this.godMode}
           togglePause={this.togglePause}
           toggleValues={this.toggleValues}

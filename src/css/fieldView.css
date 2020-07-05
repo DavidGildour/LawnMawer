@@ -1,25 +1,25 @@
 .game {
-    /* height: 80vh;
+  /* height: 80vh;
     width: 100%; */
-    grid-column: 2;
-    grid-row: 2;
-    display: grid;
-    grid-template-columns: auto 400px auto;
-    grid-template-rows: auto 400px auto;
+  grid-column: 2;
+  grid-row: 2;
+  display: grid;
+  grid-template-columns: auto 400px auto;
+  grid-template-rows: auto 400px auto;
 }
 
 #canvas {
-    grid-column: 2;
-    grid-row: 2;
-    border: 1px solid black;
+  grid-column: 2;
+  grid-row: 2;
+  border: 1px solid black;
 }
 
 .debug {
-    padding-top: 5px;
-    font-family: monospace;
-    font-size: 0.6rem;
-    grid-row: 3;
-    grid-column: 2;
-    text-align: left;
-    color: black;
+  padding-top: 5px;
+  font-family: monospace;
+  font-size: 0.6rem;
+  grid-row: 3;
+  grid-column: 2;
+  text-align: left;
+  color: black;
 }

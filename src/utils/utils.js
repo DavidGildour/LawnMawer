@@ -8,8 +8,8 @@
  * @return {String} A string representation of HSL color value.
  */
 export function hsl(h, s, l) {
-	return `hsl(${h}, ${s}%, ${l}%)`
-};
+  return `hsl(${h}, ${s}%, ${l}%)`;
+}
 
 /**
  * A helper function used to map a number from a given range (a, b) to desired range (c, d).
@@ -23,9 +23,9 @@ export function hsl(h, s, l) {
  * @return {Number} A result of the specified mapping.
  */
 export function map(val, s1, e1, s2, e2) {
-	const ratio = (e2 - s2) / (e1 - s1);
-	return val * ratio + s2;
-};
+  const ratio = (e2 - s2) / (e1 - s1);
+  return val * ratio + s2;
+}
 
 /**
  * @typedef {[Number, Number, Number]} HSLColor
@@ -38,12 +38,12 @@ export function map(val, s1, e1, s2, e2) {
  * @return {HSLColor}
  */
 export function mapHSL(val, c1, c2) {
-    return [
-        map(val, 0, 1, c1[0], c2[0]),
-        map(val, 0, 1, c1[1], c2[1]),
-        map(val, 0, 1, c1[2], c2[2]),
-    ]
-};
+  return [
+    map(val, 0, 1, c1[0], c2[0]),
+    map(val, 0, 1, c1[1], c2[1]),
+    map(val, 0, 1, c1[2], c2[2]),
+  ];
+}
 
 /**
  * Returns a random integer from a given range [a, b).
@@ -54,10 +54,10 @@ export function mapHSL(val, c1, c2) {
  * @return {Number} A random integer from the specified range.
  */
 export function randInt(min, max) {
-		if (max !== undefined) {
-			return Math.floor(min + Math.random() * (max - min));
-		}
-		return Math.floor(Math.random() * min);
+  if (max !== undefined) {
+    return Math.floor(min + Math.random() * (max - min));
+  }
+  return Math.floor(Math.random() * min);
 }
 
 /* NOT USED RIGHT NOW
@@ -104,25 +104,25 @@ export function randSample(array) {
  *     {currentValue: 9, final: true}
  */
 export function* buildRange(base, stepFunc, condition) {
-    let currentValue, final;
-    if (base instanceof Array && !stepFunc) {
-        while (base) {
-            currentValue = base.shift();
-            final = base.length === 0;
-            yield { currentValue, final };
-        }
-    } else {
-        if (!condition) {
-            condition = () => true;
-        }
-        currentValue = base;
-        while (condition(currentValue)) {
-            const nextValue = stepFunc(currentValue)
-            final = !condition(nextValue)
-            yield { currentValue, final };
-            currentValue = nextValue;
-        }
+  let currentValue, final;
+  if (base instanceof Array && !stepFunc) {
+    while (base) {
+      currentValue = base.shift();
+      final = base.length === 0;
+      yield { currentValue, final };
     }
+  } else {
+    if (!condition) {
+      condition = () => true;
+    }
+    currentValue = base;
+    while (condition(currentValue)) {
+      const nextValue = stepFunc(currentValue);
+      final = !condition(nextValue);
+      yield { currentValue, final };
+      currentValue = nextValue;
+    }
+  }
 }
 
 /**
@@ -135,6 +135,6 @@ export function* buildRange(base, stepFunc, condition) {
  *
  */
 export function getNextValue(generator) {
-    const val = generator.next().value;
-    return [val.currentValue, val.final]
+  const val = generator.next().value;
+  return [val.currentValue, val.final];
 }

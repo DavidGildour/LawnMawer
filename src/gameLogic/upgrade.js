@@ -1,8 +1,13 @@
 import { getNextValue } from '../utils/utils';
 
-
 export default class Upgrade {
-  constructor(name, basePrice, generator, priceMultiplier, externalCondition = () => true) {
+  constructor(
+    name,
+    basePrice,
+    generator,
+    priceMultiplier,
+    externalCondition = () => true
+  ) {
     this.externalCondition = externalCondition;
     this.name = name;
     this.basePrice = basePrice;
@@ -24,7 +29,9 @@ export default class Upgrade {
     }
   }
 
-  set currentPrice(val) { this._currentPrice = val }
+  set currentPrice(val) {
+    this._currentPrice = val;
+  }
 
   static fromStatBase(name, stat, externalCondition) {
     return new Upgrade(
@@ -32,8 +39,8 @@ export default class Upgrade {
       stat.basePrice,
       stat.valueRange,
       stat.priceMultiplier,
-      externalCondition,
-    )
+      externalCondition
+    );
   }
 
   initValue = () => {
@@ -42,12 +49,14 @@ export default class Upgrade {
       this.currentPrice = Infinity;
     }
     return nextValue;
-  }
+  };
 
   upgrade = () => {
     let [nextValue, final] = getNextValue(this.generator);
-    this.currentPrice = !final ? this.currentPrice.mult(this.priceMultiplier) : Infinity;
+    this.currentPrice = !final
+      ? this.currentPrice.mult(this.priceMultiplier)
+      : Infinity;
     this.currentValue = nextValue;
     return this.currentValue;
-  }
-};
+  };
+}
