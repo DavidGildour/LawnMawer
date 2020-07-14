@@ -41,7 +41,6 @@ export default class Field {
   resize(newSize) {
     this.size = newSize;
     this.cells = this.initField();
-    this.renderAll();
   }
 
   speedUpMawer(newSpeed) {

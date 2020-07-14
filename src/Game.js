@@ -25,12 +25,12 @@ class Game extends React.Component {
     };
   }
 
-  calculateIncome = (value) => {
+  calculateIncome = value => {
     // TODO: more sophisticated way of calculating income
     return Math.round(this.state.currentField.cashMultiplier * value);
   };
 
-  genericUpgrade = (upgradeType) => {
+  genericUpgrade = upgradeType => {
     const { cash } = this.state;
     const price = this.state.currentField[upgradeType].currentPrice;
     if (price !== Infinity && cash.sub(price).ge(0)) {
@@ -48,8 +48,8 @@ class Game extends React.Component {
   upgradeGrowthSpeed = () => this.genericUpgrade('growthSpeed');
   upgradeMawerSize = () => this.genericUpgrade('mawerSize');
 
-  toggleDebug = (field) => {
-    this.setState((state) => ({
+  toggleDebug = field => {
+    this.setState(state => ({
       debug: {
         ...state.debug,
         [field]: !state.debug[field],
@@ -71,25 +71,30 @@ class Game extends React.Component {
     const rawValueMawed = field.update(growthRate.currentValue);
     const income = this.calculateIncome(rawValueMawed);
 
-    this.tickTimeoutId = setTimeout(this.tick, tickRate.currentValue, field);
+    this.tickTimeoutId = setTimeout(
+      this.tick,
+      tickRate.currentValue,
+      field,
+      renderer
+    );
     if (income > 0) {
-      this.setState((state) => ({
+      this.setState(state => ({
         cash: state.cash.add(income),
       }));
     }
-    if (field === this.currentField) {
+    if (renderer && field === this.state.currentField.field) {
       renderer.update();
     }
   };
 
   godMode = () => {
-    this.setState((state) => ({
+    this.setState(state => ({
       cash: state.cash.add(100_000_000),
     }));
   };
 
   render() {
-    const { debug, cash } = this.state;
+    const { debug, cash, currentField } = this.state;
     const {
       baseColor,
       grownColor,
@@ -100,7 +105,8 @@ class Game extends React.Component {
       mawerSpeed,
       growthSpeed,
       mawerSize,
-    } = this.state.currentField;
+      field,
+    } = currentField;
     return (
       <div className="Game">
         <Header />
@@ -142,6 +148,7 @@ class Game extends React.Component {
           debug={debug}
           tick={this.tick}
           tickId={this.tickTimeoutId}
+          field={field}
         />
       </div>
     );
