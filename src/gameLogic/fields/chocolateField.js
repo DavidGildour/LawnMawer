@@ -2,6 +2,7 @@ import Config from '../config';
 import Muney from '../../utils/money';
 
 export default new Config({
+  name: 'chocolateField',
   baseColor: [60, 100, 90],
   grownColor: [30, 50, 40],
   mawerColor: [204, 100, 50],

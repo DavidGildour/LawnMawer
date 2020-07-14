@@ -9,6 +9,8 @@ import fields from './gameLogic/fields';
 
 import Muney from './utils/money';
 
+const fieldOrder = ['grassField', 'chocolateField'];
+
 class Game extends React.Component {
   constructor(props) {
     super(props);
@@ -16,7 +18,7 @@ class Game extends React.Component {
     this.state = {
       cash: new Muney(0),
       currentField: grassField,
-      fields: [],
+      fields: fields,
       debug: {
         active: true,
         paused: false,
@@ -39,6 +41,17 @@ class Game extends React.Component {
         cash: cash.sub(price),
       });
     }
+  };
+
+  toggleFields = () => {
+    this.setState(({ currentField, fields }) => ({
+      currentField:
+        fields[
+          fieldOrder[
+            (fieldOrder.indexOf(currentField.name) + 1) % fieldOrder.length
+          ]
+        ],
+    }));
   };
 
   upgradeTick = () => this.genericUpgrade('tickRate');
@@ -134,6 +147,7 @@ class Game extends React.Component {
           togglePause={this.togglePause}
           toggleValues={this.toggleValues}
           debug={debug}
+          toggleFields={this.toggleFields}
         />
         <FieldView
           size={fieldSize.currentValue}

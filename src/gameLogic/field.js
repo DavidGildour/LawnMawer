@@ -1,5 +1,5 @@
 import Grass from './grass';
-import { hsl, randInt } from '../utils/utils';
+import { randInt } from '../utils/utils';
 import Mawer from './mawer';
 
 export default class Field {
@@ -52,6 +52,8 @@ export default class Field {
   }
 
   resizeMawer(size) {
+    if (size[0] === this.mawer.size.width && size[1] === this.mawer.size.height)
+      return;
     this.addCellsToRerender(
       this.mawer.getArea().map(pos => this.getCell(...pos))
     );

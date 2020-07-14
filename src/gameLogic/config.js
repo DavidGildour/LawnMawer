@@ -19,6 +19,7 @@ class StatBase {
 
 export default class Config {
   constructor({
+    name,
     baseColor,
     grownColor,
     mawerColor,
@@ -30,6 +31,7 @@ export default class Config {
     growthSpeedBasePrice,
     cashMultiplier,
   }) {
+    this.name = name;
     this.baseColor = baseColor;
     this.grownColor = grownColor;
     this.mawerColor = mawerColor;

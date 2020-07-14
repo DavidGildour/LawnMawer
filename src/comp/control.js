@@ -33,6 +33,9 @@ export default function Control(props) {
         {props.debug.paused ? 'Resume' : 'Pause'}
       </button>
     );
+    const toggleFields = (
+      <button onClick={props.toggleFields}>Toggle fields</button>
+    );
     const gridValues = (
       <button onClick={props.toggleValues}>Show grid values</button>
     );
@@ -42,6 +45,7 @@ export default function Control(props) {
         Debug stuff:{gridValues}
         {timeControl}
         {godMode}
+        {toggleFields}
       </div>
     );
   }

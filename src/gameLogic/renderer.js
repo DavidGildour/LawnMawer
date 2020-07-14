@@ -1,4 +1,4 @@
-import { hsl, randInt } from '../utils/utils';
+import { hsl } from '../utils/utils';
 
 export default class Renderer {
   constructor(ctx, debugMode) {

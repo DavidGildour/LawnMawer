@@ -8,7 +8,6 @@ export default props => {
   const [renderer, setRenderer] = useState(null);
 
   const ref = useCallback(canvas => {
-    console.log(canvas);
     if (canvas) setRenderer(new Renderer(canvas.getContext('2d')));
   }, []);
 
