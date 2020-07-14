@@ -3,8 +3,8 @@ import { hsl, randInt } from '../utils/utils';
 export default class Renderer {
   constructor(ctx, debugMode) {
     this.ctx = ctx;
-    this.ctx.width = 400;
-    this.ctx.height = 400;
+    this.ctx.canvas.width = 400;
+    this.ctx.canvas.height = 400;
     this.field = null;
     this.debugMode = debugMode;
     this.cellSize = 0;
@@ -53,10 +53,10 @@ export default class Renderer {
       for (let j = 0; j < width; j++) {
         this.ctx.fillStyle = hsl(...cell.color);
         this.ctx.fillRect(
-          (cell.x + j) * this.field.cellSize,
-          (cell.y + i) * this.field.cellSize,
-          this.field.cellSize,
-          this.field.cellSize
+          (cell.x + j) * this.cellSize,
+          (cell.y + i) * this.cellSize,
+          this.cellSize,
+          this.cellSize
         );
         if (this.debugMode) {
           this.ctx.font = `${this.cellSize / 4}px Arial`;
@@ -64,8 +64,8 @@ export default class Renderer {
           const value = cell.value || 0;
           this.ctx.fillText(
             value.toPrecision(2).replace(/\.?0+$/, ''),
-            cell.x * this.field.cellSize + this.field.cellSize / 2,
-            cell.y * this.field.cellSize + this.field.cellSize / 2
+            cell.x * this.cellSize + this.cellSize / 2,
+            cell.y * this.cellSize + this.cellSize / 2
           );
         }
       }
